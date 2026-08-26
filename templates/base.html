@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <!-- 標題也可以挖空讓各頁面自己填 -->
+    <title>{% block title %}JobHunter 系統{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-50 flex">
+    
+    <!-- 載入側邊欄 -->
+    {% include 'sidebar.html' %}
+    
+    <!-- 右側內容區塊 (因為側邊欄是 fixed 固定住的，所以這邊要留 margin-left: 64) -->
+    <div class="flex-1 ml-64 min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

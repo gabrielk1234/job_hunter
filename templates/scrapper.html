@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block title %}爬蟲任務控制器 - JobHunter{% endblock %}
+
+{% block head %}
+<style>
+    /* 樹狀選單美化與縮排 (加上這段，層級結構就會出現了！) */
+    ul.tree { list-style-type: none; margin: 0; padding: 0; }
+    /* 子層級的左側加上虛線與縮排 */
+    ul.tree ul { padding-left: 1.5rem; margin-top: 0.25rem; border-left: 1px dashed #cbd5e1; margin-left: 0.5rem; }
+    ul.tree li { margin-bottom: 0.5rem; }
+    
+    /* 隱藏原生 checkbox，客製化漂亮樣式 */
+    .tree-checkbox {
+        appearance: none;
+        width: 1.25rem; height: 1.25rem;
+        border: 2px solid #cbd5e1; border-radius: 0.25rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.2s; position: relative; top: 0.25rem;
+    }
+    .tree-checkbox:checked { background-color: #4F46E5; border-color: #4F46E5; }
+    .tree-checkbox:checked::after {
+        content: '✓'; color: white; font-size: 0.8rem; font-weight: bold; position: absolute;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-screen relative overflow-hidden">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 py-4 px-8 flex justify-between items-center z-10 flex-shrink-0">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+                <i class="fa-solid fa-satellite-dish text-indigo-600 mr-3"></i>任務控制中心
+            </h1>
+            <p class="text-sm text-gray-500 mt-1">設定目標條件，啟動 104 人力銀行爬蟲引擎</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span> 系統待命
+            </span>
+        </div>
+    </header>
+
+    <!-- Content Area (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50">
+        <div class="max-w-6xl mx-auto space-y-6">
+            
+            <!-- 選項區塊 (改為卡片觸發 Modal) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- 地點選擇卡片 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-start transition-shadow hover:shadow-md">
+                    <div class="flex items-center space-x-4 mb-5 w-full">
+                        <div class="bg-indigo-50 p-4 rounded-xl text-indigo-500 shadow-sm border border-indigo-100">
+                            <i class="fa-solid fa-map-location-dot text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-bold text-gray-800 text-lg">工作地點</h2>
+                            <p class="text-sm mt-1" id="area-summary"><span class="text-gray-400">尚未選擇任何地點</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openModal('area')" class="mt-auto w-full border-2 border-dashed border-gray-300 text-gray-600 hover:border-indigo-600 hover:text-indigo-600 hover:bg-indigo-50 font-medium py-3 rounded-xl transition-all duration-200 flex items-center justify-center group">
+                        <i class="fa-solid fa-list-check mr-2 group-hover:scale-110 transition-transform"></i> 點擊設定地點
+                    </button>
+                </div>
+
+                <!-- 職缺選擇卡片 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-start transition-shadow hover:shadow-md">
+                    <div class="flex items-center space-x-4 mb-5 w-full">
+                        <div class="bg-emerald-50 p-4 rounded-xl text-emerald-500 shadow-sm border border-emerald-100">
+                            <i class="fa-solid fa-user-tie text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-bold text-gray-800 text-lg">職務類別</h2>
+                            <p class="text-sm mt-1" id="jobcat-summary"><span class="text-gray-400">尚未選擇任何職務</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openModal('jobcat')" class="mt-auto w-full border-2 border-dashed border-gray-300 text-gray-600 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 font-medium py-3 rounded-xl transition-all duration-200 flex items-center justify-center group">
+                        <i class="fa-solid fa-list-check mr-2 group-hover:scale-110 transition-transform"></i> 點擊設定職務
+                    </button>
+                </div>
+            </div>
+
+            <!-- 執行按鈕 (修復了顏色的 Bug) -->
+            <button id="start-btn" class="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold py-4 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-indigo-500/30 flex items-center justify-center text-lg transform hover:-translate-y-1 group">
+                <i class="fa-solid fa-paper-plane mr-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                <span>發射爬蟲！開始收集資料</span>
+            </button>
+
+            <!-- 終端機區塊 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-800 px-4 py-3 border-b border-gray-700 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <div class="flex space-x-1.5">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <span class="font-mono text-gray-300 text-xs ml-3">jobhunter-engine ~ /bin/bash</span>
+                    </div>
+                    <span class="text-xs text-emerald-400 font-bold flex items-center">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full mr-1.5 animate-pulse" id="live-indicator" style="display: none;"></span>
+                        Live Log
+                    </span>
+                </div>
+                
+                <!-- 進度條 -->
+                <div class="w-full bg-gray-900 h-1">
+                    <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-cyan-400 h-1 transition-all duration-300 ease-out" style="width: 0%"></div>
+                </div>
+                
+                <!-- 黑色螢幕區 -->
+                <div class="bg-gray-900 p-5 h-64 overflow-y-auto" id="terminal-scroll">
+                    <div id="terminal-content" class="text-emerald-400 font-mono text-sm leading-relaxed tracking-wide space-y-1.5">
+                        <div class="text-gray-500">歡迎使用 JobHunter 爬蟲系統。</div>
+                        <div class="text-gray-500">請在上方設定好目標，並點擊發射按鈕。</div>
+                        <div class="text-gray-500">> _</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- 地點選擇彈出視窗 (Modal) -->
+<div id="modal-area" class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col transform scale-95 transition-transform duration-300 m-4">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center"><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> 選擇工作地點</h3>
+            <button onclick="closeModal('area')" class="text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full p-1 shadow-sm border border-gray-200 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="area-container" class="flex-1 overflow-y-auto p-6 bg-white text-sm text-gray-700">
+            <div class="flex justify-center items-center h-full text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 載入中...</div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end">
+            <button onclick="closeModal('area')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-colors shadow-sm">完成選擇</button>
+        </div>
+    </div>
+</div>
+
+<!-- 職務選擇彈出視窗 (Modal) -->
+<div id="modal-jobcat" class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col transform scale-95 transition-transform duration-300 m-4">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center"><i class="fa-solid fa-user-tie text-emerald-500 mr-2"></i> 選擇職務類別</h3>
+            <button onclick="closeModal('jobcat')" class="text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full p-1 shadow-sm border border-gray-200 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="jobcat-container" class="flex-1 overflow-y-auto p-6 bg-white text-sm text-gray-700">
+            <div class="flex justify-center items-center h-full text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 載入中...</div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end">
+            <button onclick="closeModal('jobcat')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-6 rounded-lg transition-colors shadow-sm">完成選擇</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal 控制邏輯
+    function openModal(type) {
+        const modal = document.getElementById(`modal-${type}`);
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.querySelector('div').classList.remove('scale-95');
+    }
+
+    function closeModal(type) {
+        const modal = document.getElementById(`modal-${type}`);
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.querySelector('div').classList.add('scale-95');
+        // 關閉時更新主畫面卡片的統計文字
+        updateSummary(type);
+    }
+
+    // 更新卡片上的選擇數量
+    function updateSummary(type) {
+        const container = document.getElementById(`${type}-container`);
+        const summaryEl = document.getElementById(`${type}-summary`);
+        if(!container || !summaryEl) return;
+        
+        const ul = container.querySelector('ul.tree');
+        if(!ul) return;
+
+        const selected = getSelectedValues(ul);
+        if (selected.length === 0) {
+            summaryEl.innerHTML = `<span class="text-gray-400">尚未選擇任何條件</span>`;
+        } else {
+            const colorClass = type === 'area' ? 'text-indigo-600' : 'text-emerald-600';
+            summaryEl.innerHTML = `<span class="${colorClass} font-bold bg-${type === 'area'?'indigo':'emerald'}-50 px-2 py-0.5 rounded">已選擇 ${selected.length} 項大分類</span>`;
+        }
+    }
+
+    // 把 JSON 資料變成可收合的 HTML 樹狀結構
+    function buildTree(data, container) {
+        const ul = document.createElement('ul');
+        ul.className = 'tree space-y-1';
+        
+        data.forEach(item => {
+            const li = document.createElement('li');
+            
+            // 建立整行的容器
+            const row = document.createElement('div');
+            row.className = 'flex items-center p-1.5 hover:bg-gray-100 rounded-lg transition-colors group';
+
+            // 展開/收合 按鈕 (如果有子項目的話)
+            let toggleBtn = null;
+            const hasChildren = item.n && item.n.length > 0;
+
+            if (hasChildren) {
+                toggleBtn = document.createElement('button');
+                toggleBtn.className = 'w-6 h-6 flex items-center justify-center mr-2 rounded hover:bg-gray-200 transition-colors text-gray-400';
+                toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right text-[10px]"></i>';
+            } else {
+                // 如果沒有子項目，放一個空的佔位符號，讓排版對齊
+                const spacer = document.createElement('span');
+                spacer.className = 'w-6 h-6 mr-2 inline-block';
+                row.appendChild(spacer);
+            }
+
+            if (toggleBtn) row.appendChild(toggleBtn);
+            
+            // 建立客製化樣式的 checkbox
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = item.no;
+            checkbox.className = 'tree-checkbox mr-3 cursor-pointer flex-shrink-0';
+            checkbox.id = `chk-${item.no}`;
+
+            // 建立文字標籤
+            const label = document.createElement('label');
+            label.htmlFor = `chk-${item.no}`;
+            label.className = 'cursor-pointer hover:text-indigo-600 transition-colors font-medium text-gray-700 flex-1 select-none';
+            
+            if(item.eng) {
+                label.innerHTML = `${item.des} <span class="text-xs text-gray-400 font-normal ml-1">(${item.eng})</span>`;
+            } else {
+                label.textContent = item.des;
+            }
+
+            row.appendChild(checkbox);
+            row.appendChild(label);
+            li.appendChild(row);
+
+            if (hasChildren) {
+                const childrenUl = buildTree(item.n, li);
+                childrenUl.classList.add('hidden'); // 預設收合隱藏
+                li.appendChild(childrenUl);
+
+                // 點擊展開/收合的邏輯
+                toggleBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); // 防止觸發其他事件
+                    const isHidden = childrenUl.classList.contains('hidden');
+                    if (isHidden) {
+                        childrenUl.classList.remove('hidden');
+                        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down text-[10px] text-indigo-600"></i>';
+                    } else {
+                        childrenUl.classList.add('hidden');
+                        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>';
+                    }
+                });
+
+                // 連動邏輯：父節點打勾，子節點全勾
+                checkbox.addEventListener('change', (e) => {
+                    const childCheckboxes = childrenUl.querySelectorAll('input[type="checkbox"]');
+                    childCheckboxes.forEach(child => child.checked = e.target.checked);
+                });
+            }
+            ul.appendChild(li);
+        });
+        container.appendChild(ul);
+        return ul;
+    }
+
+    // 取出選中最高層級的值
+    function getSelectedValues(ulElement) {
+        let selected = [];
+        const items = ulElement.children; 
+        
+        for (let li of items) {
+            // 注意架構有變，現在 input 放在 div(row) 裡面了
+            const checkbox = li.querySelector(':scope > div > input[type="checkbox"]');
+            if (checkbox.checked) {
+                selected.push(checkbox.value); // 父節點有勾，直接抓父節點
+            } else {
+                // 父節點沒勾，才往下檢查子節點有沒有被勾選
+                const childUl = li.querySelector(':scope > ul');
+                if (childUl) {
+                    selected = selected.concat(getSelectedValues(childUl));
+                }
+            }
+        }
+        return selected;
+    }
+
+    // 初始化載入選項
+    async function loadOptions() {
+        try {
+            const areaRes = await fetch('/static/job_area.json');
+            const areaData = await areaRes.json();
+            const areaContainer = document.getElementById('area-container');
+            areaContainer.innerHTML = '';
+            buildTree(areaData, areaContainer);
+
+            // 修改了這裡的相對路徑，加上 /static/ 確保永遠抓得到檔案
+            const jobcatRes = await fetch('/static/job_cat.json');
+            const jobcatData = await jobcatRes.json();
+            const jobcatContainer = document.getElementById('jobcat-container');
+            jobcatContainer.innerHTML = '';
+            buildTree(jobcatData, jobcatContainer);
+        } catch (err) {
+            console.error("載入 JSON 失敗", err);
+            const errorMsg = "<div class='text-red-500 font-bold p-4 bg-red-50 rounded-lg'><i class='fa-solid fa-triangle-exclamation mr-2'></i>找不到檔案，請確認 static 資料夾內有 job_area.json 和 job_cat.json！</div>";
+            document.getElementById('area-container').innerHTML = errorMsg;
+            document.getElementById('jobcat-container').innerHTML = errorMsg;
+        }
+    }
+
+    window.onload = loadOptions;
+
+    // WebSocket 連線與執行
+    document.getElementById('start-btn').addEventListener('click', async () => {
+        const areaUl = document.querySelector('#area-container > ul');
+        const jobcatUl = document.querySelector('#jobcat-container > ul');
+        
+        if (!areaUl || !jobcatUl) {
+            alert("⚠️ 選項資料尚未載入成功，請稍後再試！");
+            return;
+        }
+
+        const selectedAreas = getSelectedValues(areaUl);
+        const selectedJobcats = getSelectedValues(jobcatUl);
+
+        if (selectedAreas.length === 0 || selectedJobcats.length === 0) {
+            alert("地點跟職缺至少都要選一個喔！");
+            return;
+        }
+
+        const btn = document.getElementById('start-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> 任務執行中，請稍候...`;
+        btn.classList.replace('from-indigo-600', 'from-gray-500');
+        btn.classList.replace('to-blue-500', 'to-gray-600');
+        btn.classList.remove('hover:-translate-y-1');
+
+        document.getElementById('live-indicator').style.display = 'inline-block';
+        
+        const terminal = document.getElementById('terminal-content');
+        const scrollArea = document.getElementById('terminal-scroll');
+        const progressBar = document.getElementById('progress-bar');
+        
+        terminal.innerHTML = "<div class='text-blue-400'>[System] 初始化通訊協定，準備建立 WebSocket 連線...</div>";
+        progressBar.style.width = "0%";
+
+        try {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const host = window.location.host || '127.0.0.1:8000'; 
+            const wsUrl = `${protocol}//${host}/api/ws-scrape`;
+            
+            const ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                terminal.innerHTML += "<div class='text-emerald-400 font-bold'>[System] 連線已建立！發送參數至引擎...</div>";
+                ws.send(JSON.stringify({ areas: selectedAreas, jobcats: selectedJobcats }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if(data.log) {
+                    const logLine = document.createElement('div');
+                    if(data.log.includes('❌')) logLine.className = 'text-red-400';
+                    else if(data.log.includes('⚠️')) logLine.className = 'text-yellow-400';
+                    
+                    logLine.innerText = `> ${data.log}`;
+                    terminal.appendChild(logLine);
+                    scrollArea.scrollTop = scrollArea.scrollHeight;
+                }
+
+                if(data.progress !== undefined) {
+                    progressBar.style.width = data.progress + "%";
+                }
+
+                if(data.done) {
+                    restoreButton();
+                    terminal.innerHTML += "<div class='text-blue-400 mt-2'>[System] 連線已安全關閉。</div>";
+                    ws.close();
+                }
+            };
+
+            ws.onclose = (event) => {
+                if(!btn.disabled) return; 
+                terminal.innerHTML += `<div class='text-yellow-400 font-bold mt-2'>[System] ⚠️ 連線中斷。</div>`;
+                restoreButton();
+            };
+
+            ws.onerror = (error) => {
+                terminal.innerHTML += "<div class='text-red-400 font-bold mt-2'>[Error] ❌ 連線失敗！無法連接至伺服器。</div>";
+                restoreButton();
+            };
+
+        } catch (error) {
+            terminal.innerHTML += `<div class='text-red-500'>[Error] ❌ 程式錯誤：${error}</div>`;
+            restoreButton();
+        }
+
+        function restoreButton() {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-rotate-right mr-2"></i> 重新設定並啟動任務`;
+            btn.classList.replace('from-gray-500', 'from-indigo-600');
+            btn.classList.replace('to-gray-600', 'to-blue-500');
+            btn.classList.add('hover:-translate-y-1');
+            document.getElementById('live-indicator').style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

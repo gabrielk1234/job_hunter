@@ -1,0 +1,65 @@
+<div class="w-64 bg-gray-900 text-white flex flex-col h-screen fixed shadow-xl z-20">
+    <div class="p-6 flex items-center justify-center border-b border-gray-800">
+        <span class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+            JobHunter 🕵️‍♂️
+        </span>
+    </div>
+    
+    <nav class="flex-1 px-4 py-6 space-y-2">
+        
+        {% if active_page == 'dashboard' %}
+            <!-- ========================================== -->
+            <!-- 情境 A：在儀表板裡面 (顯示資料庫專屬控制器)    -->
+            <!-- ========================================== -->
+            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">資料庫檢視切換</p>
+            
+            <!-- 注意這裡：我們把原本你在 dashboard 的 onclick="switchTab()" 搬來這裡了！ -->
+            <button onclick="switchTab('sqlite')" id="btn-sqlite" class="w-full flex items-center px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition-all duration-200">
+                <i class="fa-solid fa-database w-6 text-center"></i>
+                <span class="font-medium ml-2">SQLite (Raw)</span>
+            </button>
+            
+            <button onclick="switchTab('chroma')" id="btn-chroma" class="w-full flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                <i class="fa-solid fa-layer-group w-6 text-center"></i>
+                <span class="font-medium ml-2">ChromaDB (Vectors)</span>
+            </button>
+
+            <!-- 分隔線與返回主頁 -->
+            <div class="pt-6 mt-6 border-t border-gray-800"></div>
+            
+            <a href="/" class="flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group">
+                <i class="fa-solid fa-arrow-left w-6 text-center group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium ml-2">返回主頁</span>
+            </a>
+
+        {% else %}
+            <!-- ========================================== -->
+            <!-- 情境 B：在其他頁面 (顯示全站主選單)          -->
+            <!-- ========================================== -->
+            <a href="/" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 {% if active_page == 'home' %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 {% else %} text-gray-400 hover:bg-gray-800 hover:text-white {% endif %}">
+                <i class="fa-solid fa-house w-6 text-center"></i>
+                <span class="font-medium ml-2">系統首頁</span>
+            </a>
+
+            <a href="/dashboard" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 {% if active_page == 'dashboard' %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 {% else %} text-gray-400 hover:bg-gray-800 hover:text-white {% endif %}">
+                <i class="fa-solid fa-chart-pie w-6 text-center"></i>
+                <span class="font-medium ml-2">資料儀表板</span>
+            </a>
+            
+            <a href="/scrapper" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 {% if active_page == 'scraper' %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 {% else %} text-gray-400 hover:bg-gray-800 hover:text-white {% endif %}">
+                <i class="fa-solid fa-spider w-6 text-center"></i>
+                <span class="font-medium ml-2">爬蟲控制器</span>
+            </a>
+
+            <a href="/assistant" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 {% if active_page == 'assistant' %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 {% else %} text-gray-400 hover:bg-gray-800 hover:text-white {% endif %}">
+                <i class="fa-solid fa-robot w-6"></i>
+                <span class="font-medium ml-2">AI 職涯顧問</span>
+            </a>
+        {% endif %}
+
+    </nav>
+    
+    <div class="p-4 border-t border-gray-800 text-xs text-gray-500 text-center">
+        &copy; 2026 JobHunter System
+    </div>
+</div>

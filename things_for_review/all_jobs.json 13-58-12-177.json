@@ -1,0 +1,2951 @@
+{
+    "11982431": {
+        "appearDate": "20260810",
+        "applyCnt": 21,
+        "coIndustry": 1014004001,
+        "coIndustryDesc": "電力供應業",
+        "custName": "台普威能源股份有限公司",
+        "custNo": "130000000160906",
+        "description": "台普威能源是雲豹能源集團旗下的電池儲能系統整合商(BESSI)，也是國內少數能提供電網級儲能系統的公司，目前提供台灣BESS的項目開發設計、安裝施工、營運管理和維護服務，未來我們放眼亞太，若您對綠色產業有興趣並具備以下條件，歡迎加入我們的團隊！\n\n職務說明\n1. 能源領域軟體的功能應用、操作、開發、測試。 \n2. 依專案需求負責現場圖控與通訊設備軟硬體架構及模組之設計、規劃、施作，並控管專案進度。 \n3. 研發能源監控系統(Supervisory Control And Data Acquisition, SCADA)。 \n4. 現場系統軟硬體設備管理維護、測試與修改。 \n5. 協助團隊彙整文件、設計圖、及相關資料，提供作業上的協助。\n\n工作技能\n1. 主動負責、具備良好協調溝通能力與尋找解決方案的能力\n2. 熟微軟作業平台、具網路通訊知識、有資料庫觀念、懂C#、python尤佳、具圖控軟體/PLC程式經驗(InTouch、WinCC、西門子PLC)尤佳。 \n3. 依意願有機會出差至日本東京和台北\n\n",
+        "descSnippet": "台普威能源是雲豹能源集團旗下的電池儲能系統整合商(BESSI)，也是國內少數能提供電網級儲能系統的公司，目前提供台灣BESS的項目開發設計、安裝施工、營運管理和維護服務，未來我們放眼亞太，若您對綠色產業有興趣並具備以下條件，歡迎加入我們的團隊！\n\n職務說明\n1. 能源領域軟體的功能應用、操作、開發、測試。 \n2. 依專案需求負責現場圖控與通訊設備軟硬體架構及模組之設計、規劃、施作，並控管專案進度。 \n3. 研發能源監控系統(Supervisory Control And Data Acquisition, SCADA)。 \n4. 現場系統軟硬體設備管理維護、測試與修改。 \n5. 協助團隊彙整文件、設計圖、及相關資料，提供作業上的協助。\n\n工作技能\n1. 主動負責、具備良好協調溝通能力與尋找解決方案的能力\n2. 熟微軟作業平台、具網路通訊知識、有資料庫觀念、懂C#、python尤佳、具圖控軟體/PLC程式經驗(InTouch、WinCC、西門子PLC)尤佳。 \n3. 依意願有機會出差至日本東京和台北\n\n",
+        "mrtDist": 0.18,
+        "jobAddress": "中正四路151號12樓1B",
+        "jobAddrNo": 6001016002,
+        "jobAddrNoDesc": "高雄市前金區",
+        "jobName": "資深軟體專案工程師 (高雄)",
+        "jobNameSnippet": "資深軟體專案工程師 (高雄)",
+        "jobNo": "11982431",
+        "jobRo": 1,
+        "jobType": 1,
+        "lat": 22.6291879,
+        "lon": 120.2963162,
+        "link": {
+            "job": "https://www.104.com.tw/job/74tpb",
+            "cust": "https://www.104.com.tw/company/1a2x6blfgq",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/74tpb?channel=104rpt"
+        },
+        "major": [
+            "數學及電算機科學學科類",
+            "工程學科類"
+        ],
+        "mrt": "99004002003",
+        "mrtDesc": "捷運前金站",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf12": {
+                "desc": "",
+                "param": "wf12"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf26": {
+                "desc": "",
+                "param": "wf26"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf31": {
+                "desc": "",
+                "param": "wf31"
+            },
+            "landmark": {
+                "desc": "距捷運前金站約180公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "0830~17:30",
+        "hrBehaviorPR": 0.9174633792109652,
+        "jobCat": [
+            2007001004,
+            2008001005,
+            2009002003
+        ],
+        "labels": [
+            "c@graduates_welcome",
+            "association@j00014",
+            "c@wf2",
+            "association@j00004",
+            "c@wf10",
+            "indexjob@ij005",
+            "indexjob@ij010",
+            "c@wf3",
+            "c@wf8",
+            "c@wf29",
+            "c@wf12",
+            "association@j00018",
+            "45plus@45invited",
+            "c@wf7",
+            "c@wf26",
+            "c@wf9",
+            "c@wf1",
+            "c@wf31"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            },
+            {
+                "language": 2,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [
+            2,
+            64,
+            2048
+        ],
+        "employeeCount": 80,
+        "pcSkills": [
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003067",
+                "description": "Visual Studio .net"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12001003045",
+                "description": "Python"
+            }
+        ],
+        "pddScore": 1.410383,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/logo.jpg?v=20260731140902",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787187873,
+            "lastCustReplyTimestamp": 1787038378,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15174746": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1002011001,
+        "coIndustryDesc": "鋼鐵基本工業",
+        "custName": "維勝鋼鐵股份有限公司",
+        "custNo": "83713594000",
+        "description": "主要工作內容如下：\n1. 伺服器與 VMware ESXi 主機維護、企業網路管理及日常資料備份。\n2. 使用者電腦、印表機及周邊設備安裝與故障排除。\n3. 協助使用者處理 ERP (鼎新 TIPTOP)、電子簽核、Mail 等系統操作問題。\n4. 資訊軟硬體設備評估、採購及後續資產管理。\n5. 配合工作需求，需出差支援其他廠區資訊維護。\n6. 其他資訊相關事項及主管交辦事項。\n\n\n\n\n",
+        "descSnippet": "主要工作內容如下：\n1. 伺服器與 VMware ESXi 主機維護、企業網路管理及日常資料備份。\n2. 使用者電腦、印表機及周邊設備安裝與故障排除。\n3. 協助使用者處理 ERP (鼎新 TIPTOP)、電子簽核、Mail 等系統操作問題。\n4. 資訊軟硬體設備評估、採購及後續資產管理。\n5. 配合工作需求，需出差支援其他廠區資訊維護。\n6. 其他資訊相關事項及主管交辦事項。\n\n\n\n\n",
+        "mrtDist": 0.25,
+        "jobAddress": "博愛一路366號8樓",
+        "jobAddrNo": 6001016008,
+        "jobAddrNoDesc": "高雄市三民區",
+        "jobName": "高雄總公司_MIS/資訊工程師",
+        "jobNameSnippet": "高雄總公司_MIS/資訊工程師",
+        "jobNo": "15174746",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.6506653,
+        "lon": 120.303815,
+        "link": {
+            "job": "https://www.104.com.tw/job/918wq",
+            "cust": "https://www.104.com.tw/company/12ggwuj4",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/918wq?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "99004001011",
+        "mrtDesc": "捷運後驛站",
+        "optionEdu": [
+            4
+        ],
+        "period": 3,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 45000,
+        "salaryLow": 35000,
+        "tags": {
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf31": {
+                "desc": "",
+                "param": "wf31"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf26": {
+                "desc": "",
+                "param": "wf26"
+            },
+            "wf28": {
+                "desc": "",
+                "param": "wf28"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "landmark": {
+                "desc": "距捷運後驛站約250公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.9788978021853335,
+        "jobCat": [
+            2007002006,
+            2007001009
+        ],
+        "labels": [
+            "c@wf4",
+            "c@wf7",
+            "c@wf17",
+            "c@wf10",
+            "c@wf31",
+            "c@wf1",
+            "indexjob@ij003",
+            "c@wf9",
+            "c@wf29",
+            "c@wf3",
+            "c@wf25",
+            "c@wf18",
+            "c@wf26",
+            "c@wf28",
+            "senior@senior_job_B",
+            "c@wf27",
+            "c@wf2"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 200,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/4000/83713594000/logo.jpg?v=20260819105807",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787194672,
+            "lastCustReplyTimestamp": 1787116003,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "13729243": {
+        "appearDate": "20260820",
+        "applyCnt": 5,
+        "coIndustry": 1012002001,
+        "coIndustryDesc": "環境衛生及污染防治服務業",
+        "custName": "台境企業股份有限公司",
+        "custNo": "80369745000",
+        "description": "1.伺服器及桌面虛擬化導入、維護與分析(VMWare Solution, Hyper V)\n2.網路相關設備( Switch, firewall, wireless)，安裝設定與維護\n3.AD、mail Server (Exchange) 管理與維護\n4.網路架構規劃架設建置\n5.內部系統操作管理，電腦軟硬體、網路故障排除\n6.資訊系統導入及維護\n7.PBX、VOIP等交換機相關\n8.主管交代事項\n",
+        "descSnippet": "1.伺服器及桌面虛擬化導入、維護與分析(VMWare Solution, Hyper V)\n2.網路相關設備( Switch, firewall, wireless)，安裝設定與維護\n3.AD、mail Server (Exchange) 管理與維護\n4.網路架構規劃架設建置\n5.內部系統操作管理，電腦軟硬體、網路故障排除\n6.資訊系統導入及維護\n7.PBX、VOIP等交換機相關\n8.主管交代事項\n",
+        "mrtDist": 0.24,
+        "jobAddress": "中正二路175號30樓之1",
+        "jobAddrNo": 6001016003,
+        "jobAddrNoDesc": "高雄市苓雅區",
+        "jobName": "資訊工程師(擴編)",
+        "jobNameSnippet": "資訊工程師(擴編)",
+        "jobNo": "13729243",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.630237,
+        "lon": 120.3137297,
+        "link": {
+            "job": "https://www.104.com.tw/job/869jv",
+            "cust": "https://www.104.com.tw/company/10x62k4o",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/869jv?channel=104rpt"
+        },
+        "major": [
+            "數學及電算機科學學科類",
+            "電機電子工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "99004002005",
+        "mrtDesc": "捷運信義國小站",
+        "optionEdu": [
+            4,
+            5,
+            6
+        ],
+        "period": 4,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf26": {
+                "desc": "",
+                "param": "wf26"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf28": {
+                "desc": "",
+                "param": "wf28"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "landmark": {
+                "desc": "距捷運信義國小站約240公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "9:00-18:00",
+        "hrBehaviorPR": 0.9376964360682151,
+        "jobCat": [
+            2007001004,
+            2007002005,
+            2007002006
+        ],
+        "labels": [
+            "c@wf10",
+            "c@wf30",
+            "c@wf3",
+            "c@wf26",
+            "association@j00004",
+            "c@wf1",
+            "c@wf28",
+            "c@wf9",
+            "indexjob@ij005",
+            "c@wf4",
+            "c@wf2",
+            "c@wf8",
+            "c@wf17",
+            "45plus@45invited",
+            "c@wf7",
+            "indexjob@ij003",
+            "senior@senior_job_B"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 150,
+        "pcSkills": [
+            {
+                "code": "12001007075",
+                "description": "VPN"
+            },
+            {
+                "code": "12001007022",
+                "description": "Firewall"
+            },
+            {
+                "code": "12001007018",
+                "description": "DNS"
+            },
+            {
+                "code": "12001007017",
+                "description": "DHCP"
+            },
+            {
+                "code": "12001001046",
+                "description": "Windows 10"
+            },
+            {
+                "code": "12001001045",
+                "description": "Windows Server 2012"
+            },
+            {
+                "code": "12001001041",
+                "description": "Windows Server 2008"
+            },
+            {
+                "code": "12001001040",
+                "description": "Windows 7"
+            },
+            {
+                "code": "12001001009",
+                "description": "Mac/Macintosh"
+            },
+            {
+                "code": "12001001008",
+                "description": "Mac OS"
+            },
+            {
+                "code": "12001001007",
+                "description": "Linux"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/5000/80369745000/logo.jpg?v=20251007134336",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786699724,
+            "lastCustReplyTimestamp": 1786938286,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15296503": {
+        "appearDate": "20260820",
+        "applyCnt": 5,
+        "coIndustry": 1002005001,
+        "coIndustryDesc": "紙相關製造業",
+        "custName": "台灣維達衛生用品股份有限公司",
+        "custNo": "22192869000",
+        "description": "1.負責高雄工廠之桌面運維、Oracle WMS 技術支持與各應用系統Level one級別的故障處理。\n    •電腦操作系統、辦公、應用軟體的安裝、維護和問題處理，確保用戶端電腦正常運行。\n    •硬體運維（電腦、網絡、掃描槍、打印機、事務機、考勤刷卡機、IP Cam等資訊設備）與故障處理，確保資訊設備正常運行。\n    •各類伺服器的日常維護，定期進行備份並做好記錄。\n    •ERP/OA/HR/報表平台等應用系統之登錄、設置等L1級問題處理，將L2、L3級別之問題通知IT權責窗口進行排除，並將處理進度回饋用戶。\n    •網路電話設置與維護管理、用戶APP安裝與使用教學。\n    •協助處理WMS日常遇到的問題，收集需求，跟集團信息中心溝通並完善解決方案。\n    •針對現有基礎架構與流程，提出可行的優化建議。\n\n2.負責高雄工廠內IT與OT設備資產管理工作\n    •定期重啟伺服器和網路設備，檢查設備狀態，及時調整網路結構和容量。\n    •定期巡檢廠內資訊設備狀態與進行基礎保養維護。\n    •資訊設備新增與報廢管理，並確實做好設備登記。\n    •定期檢查耗材庫存，如有不足提出補倉申請。\n    •員工離職時電腦及配件之檢查、回收與重新分配處理。\n\n3.負責高雄工廠之IT知識培訓\n    •員工入職培訓-OA功能與基本流程 & IT安全培訓。\n    •根據培訓計畫，實施電腦應用與操作技巧之相關培訓。\n\n4.協辦ISO9001、ISO14001、OHSAS18001、FSC等系統相關業務\n    •確保日常作業與文件符合系統要求\n    •支持系統業務運作。\n\n5.負責完成主管交辦或其他臨時性事務。\n\n\n",
+        "descSnippet": "1.負責高雄工廠之桌面運維、Oracle WMS 技術支持與各應用系統Level one級別的故障處理。\n    •電腦操作系統、辦公、應用軟體的安裝、維護和問題處理，確保用戶端電腦正常運行。\n    •硬體運維（電腦、網絡、掃描槍、打印機、事務機、考勤刷卡機、IP Cam等資訊設備）與故障處理，確保資訊設備正常運行。\n    •各類伺服器的日常維護，定期進行備份並做好記錄。\n    •ERP/OA/HR/報表平台等應用系統之登錄、設置等L1級問題處理，將L2、L3級別之問題通知IT權責窗口進行排除，並將處理進度回饋用戶。\n    •網路電話設置與維護管理、用戶APP安裝與使用教學。\n    •協助處理WMS日常遇到的問題，收集需求，跟集團信息中心溝通並完善解決方案。\n    •針對現有基礎架構與流程，提出可行的優化建議。\n\n2.負責高雄工廠內IT與OT設備資產管理工作\n    •定期重啟伺服器和網路設備，檢查設備狀態，及時調整網路結構和容量。\n    •定期巡檢廠內資訊設備狀態與進行基礎保養維護。\n    •資訊設備新增與報廢管理，並確實做好設備登記。\n    •定期檢查耗材庫存，如有不足提出補倉申請。\n    •員工離職時電腦及配件之檢查、回收與重新分配處理。\n\n3.負責高雄工廠之IT知識培訓\n    •員工入職培訓-OA功能與基本流程 & IT安全培訓。\n    •根據培訓計畫，實施電腦應用與操作技巧之相關培訓。\n\n4.協辦ISO9001、ISO14001、OHSAS18001、FSC等系統相關業務\n    •確保日常作業與文件符合系統要求\n    •支持系統業務運作。\n\n5.負責完成主管交辦或其他臨時性事務。\n\n\n",
+        "mrtDist": 0,
+        "jobAddress": "維新路光明三巷2號",
+        "jobAddrNo": 6001016022,
+        "jobAddrNoDesc": "高雄市永安區",
+        "jobName": "【外商】(Senior) Workplace Support Executive 高級資訊專員-高雄",
+        "jobNameSnippet": "【外商】(Senior) Workplace Support Executive 高級資訊專員-高雄",
+        "jobNo": "15296503",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.806276,
+        "lon": 120.2560164,
+        "link": {
+            "job": "https://www.104.com.tw/job/93uuv",
+            "cust": "https://www.104.com.tw/company/a7127bc",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/93uuv?channel=104rpt"
+        },
+        "major": [
+            "其他數學及電算機科學相關",
+            "資訊管理相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5,
+            6
+        ],
+        "period": 6,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zoneForeign": {
+                "desc": "外商公司",
+                "param": 5
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf31": {
+                "desc": "",
+                "param": "wf31"
+            },
+            "wf12": {
+                "desc": "",
+                "param": "wf12"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf28": {
+                "desc": "",
+                "param": "wf28"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf26": {
+                "desc": "",
+                "param": "wf26"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf23": {
+                "desc": "",
+                "param": "wf23"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.8700895237879115,
+        "jobCat": [
+            2007002007,
+            2007002005,
+            2007001007
+        ],
+        "labels": [
+            "senior@senior_job_A",
+            "c@wf9",
+            "c@wf2",
+            "indexjob@ij048",
+            "c@wf31",
+            "c@wf12",
+            "association@j00018",
+            "c@wf25",
+            "indexjob@ij010",
+            "c@wf28",
+            "association@j00004",
+            "c@wf10",
+            "c@wf26",
+            "c@wf3",
+            "45plus@45invited",
+            "c@wf1",
+            "c@wf23",
+            "association@j00014",
+            "c@wf29",
+            "c@wf30",
+            "c@wf7",
+            "association@j00021"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 4,
+                    "speaking": 4,
+                    "reading": 4,
+                    "writing": 4
+                }
+            }
+        ],
+        "acceptRole": [
+            64,
+            2048,
+            32768
+        ],
+        "employeeCount": 300,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/9000/22192869000/logo.jpg?v=20251208130654",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787189678,
+            "lastCustReplyTimestamp": 1787044273,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "14191251": {
+        "appearDate": "20260820",
+        "applyCnt": 1,
+        "coIndustry": 1001001001,
+        "coIndustryDesc": "電腦系統整合服務業",
+        "custName": "立承系統科技股份有限公司",
+        "custNo": "27745518000",
+        "description": "1. 網路架構規劃與執行：負責專案的網路環境規劃、佈署、整合。\n2. 環境隔離與維運：建置與設計專案所需之開放與封閉網路環境，確保傳輸穩定。\n3. 資安與系統優化：依據專案規範與資安要求，調整並優化設備與系統設置確保架構合規。\n4. 技術文件編撰：撰寫專案相關說明文件、審查簡報、架構圖，並配合專案進度進行調整。\n5. 網路設備應用：對於Extreme Networks 相關產品設置有經驗者佳。\n6.負責相關專案的網路架構規劃與執行\n7.專案需求分析、架構設計到現場調整",
+        "descSnippet": "1. 網路架構規劃與執行：負責專案的網路環境規劃、佈署、整合。\n2. 環境隔離與維運：建置與設計專案所需之開放與封閉網路環境，確保傳輸穩定。\n3. 資安與系統優化：依據專案規範與資安要求，調整並優化設備與系統設置確保架構合規。\n4. 技術文件編撰：撰寫專案相關說明文件、審查簡報、架構圖，並配合專案進度進行調整。\n5. 網路設備應用：對於Extreme Networks 相關產品設置有經驗者佳。\n6.負責相關專案的網路架構規劃與執行\n7.專案需求分析、架構設計到現場調整",
+        "mrtDist": 0.35,
+        "jobAddress": "中安路1號",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "網路資訊工程師(高雄)",
+        "jobNameSnippet": "網路資訊工程師(高雄)",
+        "jobNo": "14191251",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.5827767,
+        "lon": 120.3309121,
+        "link": {
+            "job": "https://www.104.com.tw/job/8g61f",
+            "cust": "https://www.104.com.tw/company/cquyqpc",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8g61f?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "電機電子工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "99004001003",
+        "mrtDesc": "捷運草衙站",
+        "optionEdu": [
+            3,
+            4,
+            5,
+            6
+        ],
+        "period": 2,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 60000,
+        "salaryLow": 48500,
+        "tags": {
+            "wf26": {
+                "desc": "",
+                "param": "wf26"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "landmark": {
+                "desc": "距捷運草衙站約350公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "09:00~18:00",
+        "hrBehaviorPR": 0.5632124175961332,
+        "jobCat": [
+            2007002005,
+            2007002007,
+            2004003004
+        ],
+        "labels": [
+            "c@wf26",
+            "c@wf7",
+            "c@wf18",
+            "c@wf29",
+            "c@wf2",
+            "c@wf3",
+            "c@wf9",
+            "c@wf25",
+            "c@graduates_welcome",
+            "c@wf1"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [
+            2
+        ],
+        "employeeCount": 120,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/8000/27745518000/logo.png?v=20260107135728",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787025783,
+            "lastCustReplyTimestamp": 1784112097,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15089364": {
+        "appearDate": "20260820",
+        "applyCnt": 6,
+        "coIndustry": 1002009002,
+        "coIndustryDesc": "塑膠製品製造業",
+        "custName": "台灣日東電工股份有限公司",
+        "custNo": "89004731001",
+        "description": "1. 業務流程自動化設計：使用 Power Apps、Power Automate、SharePoint 及 Copilot Studio，開發並優化自動化解決方案。\n2. 數據分析與決策支援：整合資料並以 Power BI 儀表板視覺化，協助團隊即時分析與決策。\n3. 跨部門合作：理解其他部門業務需求，轉化為技術方案並持續優化流程。\n4. 系統開發與導入：建置並部署自動化流程，提升營運效率與數位化敏捷度。\n5. 文件與支援：撰寫並更新技術文件，提供系統維護及新功能導入建議。\n",
+        "descSnippet": "1. 業務流程自動化設計：使用 Power Apps、Power Automate、SharePoint 及 Copilot Studio，開發並優化自動化解決方案。\n2. 數據分析與決策支援：整合資料並以 Power BI 儀表板視覺化，協助團隊即時分析與決策。\n3. 跨部門合作：理解其他部門業務需求，轉化為技術方案並持續優化流程。\n4. 系統開發與導入：建置並部署自動化流程，提升營運效率與數位化敏捷度。\n5. 文件與支援：撰寫並更新技術文件，提供系統維護及新功能導入建議。\n",
+        "mrtDist": 0,
+        "jobAddress": "",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "資訊人員（Power Platform / Office 365 相關）",
+        "jobNameSnippet": "資訊人員（Power Platform / Office 365 相關）",
+        "jobNo": "15089364",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.5970794,
+        "lon": 120.3147208,
+        "link": {
+            "job": "https://www.104.com.tw/job/8zf10",
+            "cust": "https://www.104.com.tw/company/14vz49yx",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8zf10?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5
+        ],
+        "period": 4,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 48000,
+        "salaryLow": 35000,
+        "tags": {
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf31": {
+                "desc": "",
+                "param": "wf31"
+            },
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf15": {
+                "desc": "",
+                "param": "wf15"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:10~17:00",
+        "hrBehaviorPR": 0.4831969863728683,
+        "jobCat": [
+            2007002003,
+            2007001004
+        ],
+        "labels": [
+            "c@wf9",
+            "c@wf30",
+            "c@wf2",
+            "c@wf3",
+            "c@wf17",
+            "c@wf10",
+            "c@wf31",
+            "c@wf4",
+            "c@wf7",
+            "indexjob@ij003",
+            "indexjob@ij007",
+            "c@wf1",
+            "c@wf15"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            },
+            {
+                "language": 2,
+                "ability": {
+                    "listening": 4,
+                    "speaking": 4,
+                    "reading": 4,
+                    "writing": 4
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 340,
+        "pcSkills": [
+            {
+                "code": "12001008011",
+                "description": "Outlook"
+            },
+            {
+                "code": "12001008016",
+                "description": "Word"
+            },
+            {
+                "code": "12001008012",
+                "description": "PowerPoint"
+            },
+            {
+                "code": "12001008003",
+                "description": "Excel"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/1001/89004731001/logo.jpg?v=20260810172208",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787116190,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "13767477": {
+        "appearDate": "20260820",
+        "applyCnt": 5,
+        "coIndustry": 1001003003,
+        "coIndustryDesc": "消費性電子產品製造業",
+        "custName": "鴻海精密工業股份有限公司",
+        "custNo": "4541302000",
+        "description": "1、IDC機房網路維運及管理\n2、用戶網路服務監控、故障排除與修復\n3、熟悉Firewall,Router,Switch的配置、維護與故障診斷\n4、網路基礎建設的規劃、建置與線路維護\n5、網路安全事件的偵測與應對\n6、雲端網路維運管理",
+        "descSnippet": "1、IDC機房網路維運及管理\n2、用戶網路服務監控、故障排除與修復\n3、熟悉Firewall,Router,Switch的配置、維護與故障診斷\n4、網路基礎建設的規劃、建置與線路維護\n5、網路安全事件的偵測與應對\n6、雲端網路維運管理",
+        "mrtDist": 0.07,
+        "jobAddress": "成功二路25號",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "高雄軟體園區-網路維運工程師",
+        "jobNameSnippet": "高雄軟體園區-網路維運工程師",
+        "jobNo": "13767477",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.6053131,
+        "lon": 120.3003288,
+        "link": {
+            "job": "https://www.104.com.tw/job/8731x",
+            "cust": "https://www.104.com.tw/company/233rv1s",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8731x?channel=104rpt"
+        },
+        "major": [
+            "資訊管理相關",
+            "資訊工程相關",
+            "電機電子工程相關"
+        ],
+        "mrt": "99004003007",
+        "mrtDesc": "輕軌軟體園區站",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf34": {
+                "desc": "",
+                "param": "wf34"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "landmark": {
+                "desc": "距輕軌軟體園區站約70公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.7008430440357187,
+        "jobCat": [
+            2007002005,
+            2007002008
+        ],
+        "labels": [
+            "c@wf10",
+            "foreigners@fc_empmidchinese_jbs",
+            "foreigners@pt_fc_em_jbs",
+            "c@wf2",
+            "association@j00025",
+            "foreigners@full_fc_em_jbs",
+            "c@wf17",
+            "c@wf27",
+            "c@wf9",
+            "c@wf34",
+            "c@wf1",
+            "association@j00002_002",
+            "association@j00021",
+            "c@wf30",
+            "c@wf7"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/4541302000/logo.png?v=20260513170723",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787109900,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15289956": {
+        "appearDate": "20260820",
+        "applyCnt": 2,
+        "coIndustry": 1002009002,
+        "coIndustryDesc": "塑膠製品製造業",
+        "custName": "展澄企業有限公司",
+        "custNo": "97140365000",
+        "description": "《職務說明》\n1.負責產品尺寸量測與檢驗，確認產品符合工程圖面及品質要求。\n2.使用游標卡尺、高度規、2D量測儀等量測工具進行尺寸量測。\n3.依工程圖面進行尺寸判讀及量測，具基本圖面閱讀能力者佳。\n4.協助整理量測紀錄、檢驗報告及相關品質文件。\n5.配合客戶需求進行產品量測與品質確認。\n5.完成主管交辦事項。\n\n《加分條件（非必要）》\n1.具 AutoCAD 基礎操作能力。\n2.具三次元量測（CMM／蔡司）操作經驗。\n3.具蔡司 CALYPSO 量測程式操作或編寫經驗。\n\n《公司提供》\n1.完整教育訓練，協助熟悉產品、量測流程及品質作業。\n2.提供三次元量測（CMM／蔡司）設備學習機會，培養專業量測技能。\n3.無三次元量測經驗者亦可，公司將安排教育訓練，歡迎有意投入精密量測領域者加入。\n\n《薪資待遇》\n月薪 30,000～40,000 元（依學經歷、專業能力及相關經驗敘薪）\n\n",
+        "descSnippet": "《職務說明》\n1.負責產品尺寸量測與檢驗，確認產品符合工程圖面及品質要求。\n2.使用游標卡尺、高度規、2D量測儀等量測工具進行尺寸量測。\n3.依工程圖面進行尺寸判讀及量測，具基本圖面閱讀能力者佳。\n4.協助整理量測紀錄、檢驗報告及相關品質文件。\n5.配合客戶需求進行產品量測與品質確認。\n5.完成主管交辦事項。\n\n《加分條件（非必要）》\n1.具 AutoCAD 基礎操作能力。\n2.具三次元量測（CMM／蔡司）操作經驗。\n3.具蔡司 CALYPSO 量測程式操作或編寫經驗。\n\n《公司提供》\n1.完整教育訓練，協助熟悉產品、量測流程及品質作業。\n2.提供三次元量測（CMM／蔡司）設備學習機會，培養專業量測技能。\n3.無三次元量測經驗者亦可，公司將安排教育訓練，歡迎有意投入精密量測領域者加入。\n\n《薪資待遇》\n月薪 30,000～40,000 元（依學經歷、專業能力及相關經驗敘薪）\n\n",
+        "mrtDist": 0,
+        "jobAddress": "仁德路9-1號",
+        "jobAddrNo": 6001016027,
+        "jobAddrNoDesc": "高雄市鳥松區",
+        "jobName": "品保量測人員",
+        "jobNameSnippet": "品保量測人員",
+        "jobNo": "15289956",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.6505491,
+        "lon": 120.3947181,
+        "link": {
+            "job": "https://www.104.com.tw/job/93pt0",
+            "cust": "https://www.104.com.tw/company/18miv5c8",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/93pt0?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            4,
+            5,
+            6
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 40000,
+        "salaryLow": 30000,
+        "tags": {
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "8:30-17:30",
+        "hrBehaviorPR": 0.5802321491382343,
+        "jobCat": [
+            2007001009,
+            2012003005
+        ],
+        "labels": [
+            "c@wf9",
+            "association@j00017"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/5000/97140365000/logo.gif?v=20240902163013",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787187576,
+            "lastCustReplyTimestamp": 1787037945,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15206214": {
+        "appearDate": "20260820",
+        "applyCnt": 3,
+        "coIndustry": 1002002003,
+        "coIndustryDesc": "不織布業",
+        "custName": "衛普材料股份有限公司",
+        "custNo": "89222151000",
+        "description": "1.針對公司現有ERP/PLM系統進行維護\n2.協助User排除資訊系統之相關問題 \n3.進行ERP/BPM/MES..等系統整合 \n4.其他主管交辦任務。\n\n※熟Oracle EBS/Agile/Apex佳",
+        "descSnippet": "1.針對公司現有ERP/PLM系統進行維護\n2.協助User排除資訊系統之相關問題 \n3.進行ERP/BPM/MES..等系統整合 \n4.其他主管交辦任務。\n\n※熟Oracle EBS/Agile/Apex佳",
+        "mrtDist": 0,
+        "jobAddress": "朝仁路231號",
+        "jobAddrNo": 6001016009,
+        "jobAddrNoDesc": "高雄市楠梓區",
+        "jobName": "『高雄楠梓廠』ERP工程師",
+        "jobNameSnippet": "『高雄楠梓廠』ERP工程師",
+        "jobNo": "15206214",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.7199179,
+        "lon": 120.3310676,
+        "link": {
+            "job": "https://www.104.com.tw/job/91x6u",
+            "cust": "https://www.104.com.tw/company/14zkkcbc",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/91x6u?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:00~17:00",
+        "hrBehaviorPR": 0.6830335969500642,
+        "jobCat": [
+            2007001009,
+            2007002003
+        ],
+        "labels": [
+            "c@wf2",
+            "c@wf8",
+            "c@wf29",
+            "c@wf7",
+            "c@wf18",
+            "c@wf3",
+            "indexjob@ij005",
+            "c@wf4",
+            "c@wf10",
+            "c@wf9",
+            "association@j00017",
+            "indexjob@ij003",
+            "association@j00025",
+            "c@wf27",
+            "c@wf25"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 310,
+        "pcSkills": [
+            {
+                "code": "12001003006",
+                "description": "ASP.NET"
+            },
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003059",
+                "description": "Visual Basic"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12001004035",
+                "description": "Oracle"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/1000/89222151000/logo.png?v=20260617151328",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786957182,
+            "lastCustReplyTimestamp": 1782268376,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15025820": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1012001001,
+        "coIndustryDesc": "醫院",
+        "custName": "惠德醫院",
+        "custNo": "20256887000",
+        "description": "1. 協助解決電腦及周邊設備的故障問題。  \n2. 維護醫療資訊系統，包括 HIS（醫院資訊系統）、PACS（影像儲存與傳輸系統）以及與網路相關的資訊設備。  \n3. 處理主管交辦的其他事項。  \n4. 有時需提供 on-call 支援服務。  ",
+        "descSnippet": "1. 協助解決電腦及周邊設備的故障問題。  \n2. 維護醫療資訊系統，包括 HIS（醫院資訊系統）、PACS（影像儲存與傳輸系統）以及與網路相關的資訊設備。  \n3. 處理主管交辦的其他事項。  \n4. 有時需提供 on-call 支援服務。  ",
+        "mrtDist": 0,
+        "jobAddress": "福祥街81號",
+        "jobAddrNo": 6001016024,
+        "jobAddrNoDesc": "高雄市鳳山區",
+        "jobName": "資訊人員",
+        "jobNameSnippet": "資訊人員",
+        "jobNo": "15025820",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.603005,
+        "lon": 120.3256116,
+        "link": {
+            "job": "https://www.104.com.tw/job/8y1zw",
+            "cust": "https://www.104.com.tw/company/9b0fe1k",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8y1zw?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5
+        ],
+        "period": 2,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 42000,
+        "salaryLow": 38000,
+        "tags": {
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.4108222799632374,
+        "jobCat": [
+            2007002007
+        ],
+        "labels": [
+            "c@wf7",
+            "c@wf10",
+            "c@wf2",
+            "c@wf1",
+            "c@wf3"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/7000/20256887000/logo.gif?v=20260518091536",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786949990,
+            "lastCustReplyTimestamp": 1785139751,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "14809076": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1001003003,
+        "coIndustryDesc": "消費性電子產品製造業",
+        "custName": "鴻海精密工業股份有限公司",
+        "custNo": "4541302000",
+        "description": "We are seeking a software project manager to join our development team. In this role, you will be responsible for the following tasks:\n\n1. Project Planning & Management\n- Define project plans, schedules, and resource allocation.\n- Track project progress to ensure on-time delivery and quality.\n- Identify risks and work with the team to resolve potential issues.\n\n2.Cross-functional Coordination\n-Collaborate with development, QA, UI/UX, DevOps, and other teams.\n-Act as the bridge between clients, business stakeholders, and the engineering team.\n-Requirement Management\n\n3.Gather, analyze, and confirm requirements, and draft Project Requirement Documents.\n-Help stakeholders define features and prioritize the product roadmap.\n-Quality, Delivery & Issue Tracking\n-Monitor milestones and deliverables to ensure quality standards.\n-Track bug issues, assign ownership, and follow up on resolution to ensure timely fixes and product reliability.\n\n4.Reporting & Communication\\\n-Provide regular project status reports to leadership and stakeholders.\n-Perform system function demos to leadership and stakeholders to showcase progress.\n-Draft, review, and maintain user manuals and operational documentation to support end-users.\n\n5.Administrative Support\n-Assist in internal administrative processes, including form creation and submission.\n-Handle expense applications and reimbursement requests.\n-Support supervisors with preparing presentations, documents, and reports.\n\n\n## Requirements:\n- 5+ years of experience in software or technology companies.\n- 2+ years of experience as project or product manager.\n- TOEIC 800 or higher level. \n- Excellent communication skills in Mandarin and English.\n- Quick learner of new knowledge.",
+        "descSnippet": "We are seeking a software project manager to join our development team. In this role, you will be responsible for the following tasks:\n\n1. Project Planning & Management\n- Define project plans, schedules, and resource allocation.\n- Track project progress to ensure on-time delivery and quality.\n- Identify risks and work with the team to resolve potential issues.\n\n2.Cross-functional Coordination\n-Collaborate with development, QA, UI/UX, DevOps, and other teams.\n-Act as the bridge between clients, business stakeholders, and the engineering team.\n-Requirement Management\n\n3.Gather, analyze, and confirm requirements, and draft Project Requirement Documents.\n-Help stakeholders define features and prioritize the product roadmap.\n-Quality, Delivery & Issue Tracking\n-Monitor milestones and deliverables to ensure quality standards.\n-Track bug issues, assign ownership, and follow up on resolution to ensure timely fixes and product reliability.\n\n4.Reporting & Communication\\\n-Provide regular project status reports to leadership and stakeholders.\n-Perform system function demos to leadership and stakeholders to showcase progress.\n-Draft, review, and maintain user manuals and operational documentation to support end-users.\n\n5.Administrative Support\n-Assist in internal administrative processes, including form creation and submission.\n-Handle expense applications and reimbursement requests.\n-Support supervisors with preparing presentations, documents, and reports.\n\n\n## Requirements:\n- 5+ years of experience in software or technology companies.\n- 2+ years of experience as project or product manager.\n- TOEIC 800 or higher level. \n- Excellent communication skills in Mandarin and English.\n- Quick learner of new knowledge.",
+        "mrtDist": 0.07,
+        "jobAddress": "成功二路25號",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "高雄軟體園區-軟體專案管理",
+        "jobNameSnippet": "高雄軟體園區-軟體專案管理",
+        "jobNo": "14809076",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.6053186,
+        "lon": 120.3002794,
+        "link": {
+            "job": "https://www.104.com.tw/job/8ter8",
+            "cust": "https://www.104.com.tw/company/233rv1s",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8ter8?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "99004003007",
+        "mrtDesc": "輕軌軟體園區站",
+        "optionEdu": [
+            5
+        ],
+        "period": 6,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf34": {
+                "desc": "",
+                "param": "wf34"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "landmark": {
+                "desc": "距輕軌軟體園區站約70公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.323361283514688,
+        "jobCat": [
+            2004003003,
+            2007001001
+        ],
+        "labels": [
+            "c@wf7",
+            "c@wf30",
+            "indexjob@ij070",
+            "c@wf34",
+            "c@wf1",
+            "association@j00025",
+            "c@wf9",
+            "c@wf2",
+            "foreigners@full_fc_em_jbs",
+            "indexjob@ij019",
+            "c@wf27",
+            "c@wf10",
+            "association@j00002_002",
+            "foreigners@fc_empmidchinese_jbs",
+            "association@j00021",
+            "c@wf17",
+            "foreigners@pt_fc_em_jbs",
+            "indexjob@ij020"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 2,
+                    "speaking": 2,
+                    "reading": 2,
+                    "writing": 2
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/4541302000/logo.png?v=20260513170723",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786957676,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "14348583": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1002002003,
+        "coIndustryDesc": "不織布業",
+        "custName": "衛普材料股份有限公司",
+        "custNo": "89222151000",
+        "description": "1.BPM相關應用系統開發與維護 \n2.MES系統開發與維護 \n3.系統軟體文件管理 \n4.協助User排除資訊系統之相關問題 \n5.專案配合 ",
+        "descSnippet": "1.BPM相關應用系統開發與維護 \n2.MES系統開發與維護 \n3.系統軟體文件管理 \n4.協助User排除資訊系統之相關問題 \n5.專案配合 ",
+        "mrtDist": 0,
+        "jobAddress": "朝仁路231號",
+        "jobAddrNo": 6001016009,
+        "jobAddrNoDesc": "高雄市楠梓區",
+        "jobName": "『高雄楠梓廠』應用系統工程師",
+        "jobNameSnippet": "『高雄楠梓廠』應用系統工程師",
+        "jobNo": "14348583",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.7199179,
+        "lon": 120.3310676,
+        "link": {
+            "job": "https://www.104.com.tw/job/8jjfr",
+            "cust": "https://www.104.com.tw/company/14zkkcbc",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8jjfr?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:00~17:00",
+        "hrBehaviorPR": 0.6392134614730011,
+        "jobCat": [
+            2007001009,
+            2007002003
+        ],
+        "labels": [
+            "c@wf8",
+            "c@wf10",
+            "c@wf29",
+            "c@wf27",
+            "indexjob@ij005",
+            "c@wf7",
+            "c@wf9",
+            "association@j00017",
+            "c@wf25",
+            "c@wf18",
+            "c@wf4",
+            "indexjob@ij003",
+            "c@wf2",
+            "association@j00025",
+            "c@wf3"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 310,
+        "pcSkills": [
+            {
+                "code": "12001003006",
+                "description": "ASP.NET"
+            },
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003059",
+                "description": "Visual Basic"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12001004035",
+                "description": "Oracle"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/1000/89222151000/logo.png?v=20260617151328",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787022271,
+            "lastCustReplyTimestamp": 1786003405,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "10841362": {
+        "appearDate": "20260820",
+        "applyCnt": 3,
+        "coIndustry": 1001003003,
+        "coIndustryDesc": "消費性電子產品製造業",
+        "custName": "鴻海精密工業股份有限公司",
+        "custNo": "4541302000",
+        "description": "•監控機房維運設施、資訊設備、網路、IT及雲端服務\n•例行巡檢與事件處理通報\n•受理一線客服包含客戶障礙申告\n•協助IDC機房維運管理\n•管理大樓人員及設備進出，確保進出流程合規與安全\n•其他主管交辦事項.\n•需配合7x24三班制輪班",
+        "descSnippet": "•監控機房維運設施、資訊設備、網路、IT及雲端服務\n•例行巡檢與事件處理通報\n•受理一線客服包含客戶障礙申告\n•協助IDC機房維運管理\n•管理大樓人員及設備進出，確保進出流程合規與安全\n•其他主管交辦事項.\n•需配合7x24三班制輪班",
+        "mrtDist": 0.07,
+        "jobAddress": "成功二路25號",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "高雄軟體園區-機房維運輪班工程師",
+        "jobNameSnippet": "高雄軟體園區-機房維運輪班工程師",
+        "jobNo": "10841362",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.6053131,
+        "lon": 120.3003288,
+        "link": {
+            "job": "https://www.104.com.tw/job/6gd8y",
+            "cust": "https://www.104.com.tw/company/233rv1s",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/6gd8y?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "99004003007",
+        "mrtDesc": "輕軌軟體園區站",
+        "optionEdu": [
+            4
+        ],
+        "period": 3,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf34": {
+                "desc": "",
+                "param": "wf34"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "landmark": {
+                "desc": "距輕軌軟體園區站約70公尺"
+            }
+        },
+        "s9": [
+            2,
+            4,
+            8
+        ],
+        "s5": 256,
+        "d3": "",
+        "hrBehaviorPR": 0.32658141672245355,
+        "jobCat": [
+            2007002006,
+            2007002005,
+            2007002007
+        ],
+        "labels": [
+            "foreigners@pt_fc_em_jbs",
+            "foreigners@full_fc_em_jbs",
+            "association@j00025",
+            "c@wf2",
+            "c@wf34",
+            "association@j00002_002",
+            "c@wf10",
+            "c@wf27",
+            "c@wf17",
+            "association@j00021",
+            "c@wf9",
+            "c@wf1",
+            "c@wf30",
+            "c@wf7",
+            "foreigners@fc_empmidchinese_jbs"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 8,
+                    "speaking": 8,
+                    "reading": 8,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/4541302000/logo.png?v=20260513170723",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786946191,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15073900": {
+        "appearDate": "20260820",
+        "applyCnt": 1,
+        "coIndustry": 1002007001,
+        "coIndustryDesc": "化學原料製造業",
+        "custName": "勝一化工股份有限公司",
+        "custNo": "75970680000",
+        "description": "AI導入相關工作\n機器學習 / 深度學習基本觀念\nLLM（大型語言模型）原理與限制\n企業流程理解能力\nPrompt Engineering 基本能力\n\n",
+        "descSnippet": "AI導入相關工作\n機器學習 / 深度學習基本觀念\nLLM（大型語言模型）原理與限制\n企業流程理解能力\nPrompt Engineering 基本能力\n\n",
+        "mrtDist": 0,
+        "jobAddress": "永工一路5號",
+        "jobAddrNo": 6001016022,
+        "jobAddrNoDesc": "高雄市永安區",
+        "jobName": "【高雄永安】ai導入工程師",
+        "jobNameSnippet": "【高雄永安】ai導入工程師",
+        "jobNo": "15073900",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.8120514,
+        "lon": 120.2532318,
+        "link": {
+            "job": "https://www.104.com.tw/job/8z33g",
+            "cust": "https://www.104.com.tw/company/ywezbuo",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8z33g?channel=104rpt"
+        },
+        "major": [
+            "資訊管理相關",
+            "資訊工程相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 3,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf31": {
+                "desc": "",
+                "param": "wf31"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf23": {
+                "desc": "",
+                "param": "wf23"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:15~17:15",
+        "hrBehaviorPR": 0.6111581359990015,
+        "jobCat": [
+            2007001004,
+            2007002003
+        ],
+        "labels": [
+            "c@wf31",
+            "c@wf27",
+            "c@wf29",
+            "c@wf9",
+            "c@wf10",
+            "senior@senior_job_G",
+            "c@wf18",
+            "c@wf25",
+            "c@wf7",
+            "c@wf23",
+            "c@wf1",
+            "c@wf3",
+            "c@wf2",
+            "c@wf30",
+            "association@j00021"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [
+            32768
+        ],
+        "employeeCount": 500,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/0000/75970680000/logo.jpg?v=20260812101719",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786986094,
+            "lastCustReplyTimestamp": 1783310710,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "14948098": {
+        "appearDate": "20260820",
+        "applyCnt": 3,
+        "coIndustry": 1001003003,
+        "coIndustryDesc": "消費性電子產品製造業",
+        "custName": "鴻海精密工業股份有限公司",
+        "custNo": "4541302000",
+        "description": "1. Android 原生開發：主導 Android (Kotlin/Java) App 的開發與維護，確保產品效能與穩定性。\n2. 架構翻新與重構：主動針對 Legacy Projects 進行評估，推動架構重構與優化，將「義大利麵條程式碼」轉化為高內聚、低耦合的系統。\n3. 規格驅動開發 (SDD)：落實規格驅動開發理念，投入更多精力於軟體設計，以降低重複性的人工編碼負擔。\n4. 硬體與系統整合：串接外部硬體電路（如：人臉辨識平板、門禁感測設備），處理硬體溝通協定與底層資料傳輸。\n5. 品質保障與維運：建立自動化測試（Unit Test 等）與 CI/CD 流程，負責版本除錯與上架維運。\n6. 技術文件撰寫：詳實記錄技術決策手冊及使用者操作手冊，確保知識傳承。",
+        "descSnippet": "1. Android 原生開發：主導 Android (Kotlin/Java) App 的開發與維護，確保產品效能與穩定性。\n2. 架構翻新與重構：主動針對 Legacy Projects 進行評估，推動架構重構與優化，將「義大利麵條程式碼」轉化為高內聚、低耦合的系統。\n3. 規格驅動開發 (SDD)：落實規格驅動開發理念，投入更多精力於軟體設計，以降低重複性的人工編碼負擔。\n4. 硬體與系統整合：串接外部硬體電路（如：人臉辨識平板、門禁感測設備），處理硬體溝通協定與底層資料傳輸。\n5. 品質保障與維運：建立自動化測試（Unit Test 等）與 CI/CD 流程，負責版本除錯與上架維運。\n6. 技術文件撰寫：詳實記錄技術決策手冊及使用者操作手冊，確保知識傳承。",
+        "mrtDist": 0.07,
+        "jobAddress": "成功二路25號",
+        "jobAddrNo": 6001016007,
+        "jobAddrNoDesc": "高雄市前鎮區",
+        "jobName": "高雄軟體園區-Android應用開發工程師",
+        "jobNameSnippet": "高雄軟體園區-Android應用開發工程師",
+        "jobNo": "14948098",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.6053186,
+        "lon": 120.3002794,
+        "link": {
+            "job": "https://www.104.com.tw/job/8we0y",
+            "cust": "https://www.104.com.tw/company/233rv1s",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/8we0y?channel=104rpt"
+        },
+        "major": [
+            "資訊工程相關",
+            "電機電子工程相關",
+            "資訊管理相關"
+        ],
+        "mrt": "99004003007",
+        "mrtDesc": "輕軌軟體園區站",
+        "optionEdu": [
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "zone": {
+                "desc": "上市上櫃",
+                "param": 16
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf34": {
+                "desc": "",
+                "param": "wf34"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf30": {
+                "desc": "",
+                "param": "wf30"
+            },
+            "wf17": {
+                "desc": "",
+                "param": "wf17"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf27": {
+                "desc": "",
+                "param": "wf27"
+            },
+            "landmark": {
+                "desc": "距輕軌軟體園區站約70公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.7790021898721251,
+        "jobCat": [
+            2007001014,
+            2007001003,
+            2008001020
+        ],
+        "labels": [
+            "c@wf9",
+            "c@wf1",
+            "association@j00021",
+            "indexjob@ij070",
+            "association@j00002_002",
+            "association@j00025",
+            "c@wf34",
+            "c@wf7",
+            "c@wf10",
+            "c@wf30",
+            "c@wf17",
+            "foreigners@full_fc_em_jbs",
+            "foreigners@fc_empmidchinese_jbs",
+            "c@wf2",
+            "c@wf27",
+            "foreigners@pt_fc_em_jbs"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 2,
+                    "speaking": 2,
+                    "reading": 2,
+                    "writing": 2
+                }
+            }
+        ],
+        "acceptRole": [],
+        "employeeCount": 0,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/4541302000/logo.png?v=20260513170723",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787189341,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "7662632": {
+        "appearDate": "20260820",
+        "applyCnt": 2,
+        "coIndustry": 1002012001,
+        "coIndustryDesc": "自動控制相關業",
+        "custName": "沅珅科技有限公司",
+        "custNo": "27702270000",
+        "description": "公司是自動化儀電工程承包商也是能源設備代理商，\n專營儀表與電氣設備之設計、安裝、校驗、維護與故障排除，\n以及發電機設備安裝測試保養，\n北中南都有設有公司據點\n\n工作項目為：\n各大品牌PLC系統  GE .AB. SIEMSEN等 \n1. 程控系統 PLC / DCS  程式編寫與設計  \n2. 設備機台 PLC / HMI  程式編寫與設計\n3. SQL Server 資料庫應用編寫設計\n4. 石化廠區程序系統 / 電子廠專用設備 / 各種PLC / HMI  / DCS都有學習機會\n5. 基本迴路設計圖繪製\n6.可配合出差\n\n公司提供完整作業環境與專業教育訓練，所有工作技能皆可於本公司學習訓練\n★依個人工作考核穩定調薪★",
+        "descSnippet": "公司是自動化儀電工程承包商也是能源設備代理商，\n專營儀表與電氣設備之設計、安裝、校驗、維護與故障排除，\n以及發電機設備安裝測試保養，\n北中南都有設有公司據點\n\n工作項目為：\n各大品牌PLC系統  GE .AB. SIEMSEN等 \n1. 程控系統 PLC / DCS  程式編寫與設計  \n2. 設備機台 PLC / HMI  程式編寫與設計\n3. SQL Server 資料庫應用編寫設計\n4. 石化廠區程序系統 / 電子廠專用設備 / 各種PLC / HMI  / DCS都有學習機會\n5. 基本迴路設計圖繪製\n6.可配合出差\n\n公司提供完整作業環境與專業教育訓練，所有工作技能皆可於本公司學習訓練\n★依個人工作考核穩定調薪★",
+        "mrtDist": 0,
+        "jobAddress": "文自路650巷23號",
+        "jobAddrNo": 6001016011,
+        "jobAddrNoDesc": "高雄市左營區",
+        "jobName": "高雄總公司-程控軟體工程師",
+        "jobNameSnippet": "高雄總公司-程控軟體工程師",
+        "jobNo": "7662632",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.6811897,
+        "lon": 120.3129221,
+        "link": {
+            "job": "https://www.104.com.tw/job/4k8iw",
+            "cust": "https://www.104.com.tw/company/cq57sc0",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/4k8iw?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            2,
+            3,
+            4
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 43000,
+        "salaryLow": 40000,
+        "tags": {
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf32": {
+                "desc": "",
+                "param": "wf32"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:00~17:30",
+        "hrBehaviorPR": 0.6351582267709031,
+        "jobCat": [
+            2009002003,
+            2007001004,
+            2007001009
+        ],
+        "labels": [
+            "c@wf3",
+            "c@wf2",
+            "c@wf32",
+            "c@wf1",
+            "c@wf10",
+            "c@wf7",
+            "c@wf29",
+            "c@wf9"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 50,
+        "pcSkills": [
+            {
+                "code": "12001003059",
+                "description": "Visual Basic"
+            },
+            {
+                "code": "12002003001",
+                "description": "AutoCAD"
+            },
+            {
+                "code": "12004001027",
+                "description": "PLC"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/0000/27702270000/logo.png?v=20250807143533",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1787106574,
+            "lastCustReplyTimestamp": 1783306034,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "11686443": {
+        "appearDate": "20260820",
+        "applyCnt": 5,
+        "coIndustry": 1002014003,
+        "coIndustryDesc": "汽車及其零件製造業",
+        "custName": "崇瑋工業股份有限公司",
+        "custNo": "22824252000",
+        "description": "1.負責 ERP 系統與周邊系統之維護、整合、優化與異常處理。 \n2.負責關鍵模組開發，包含需求分析、設計、開發。\n3.主導 ERP 與 MES、WMS、BI、簽核、報表平台、外部客戶或供應商平台之資料串接與整合。 \n4.分析 ERP 模組資料流、主檔／交易資料邏輯與跨系統介接需求，規劃可落地之整合方案。 \n5.獨立處理 API、Web Service、批次交換、資料匯入匯出、資料同步與介接異常問題。 \n6.配合主管進行需求確認、程式修改、文件整理與上線支援。 \n7.維護既有系統穩定運作，並配合開發規範進行版本管理。\n\n",
+        "descSnippet": "1.負責 ERP 系統與周邊系統之維護、整合、優化與異常處理。 \n2.負責關鍵模組開發，包含需求分析、設計、開發。\n3.主導 ERP 與 MES、WMS、BI、簽核、報表平台、外部客戶或供應商平台之資料串接與整合。 \n4.分析 ERP 模組資料流、主檔／交易資料邏輯與跨系統介接需求，規劃可落地之整合方案。 \n5.獨立處理 API、Web Service、批次交換、資料匯入匯出、資料同步與介接異常問題。 \n6.配合主管進行需求確認、程式修改、文件整理與上線支援。 \n7.維護既有系統穩定運作，並配合開發規範進行版本管理。\n\n",
+        "mrtDist": 0,
+        "jobAddress": "萬金路8-6號",
+        "jobAddrNo": 6001016013,
+        "jobAddrNoDesc": "高雄市大社區",
+        "jobName": "資訊軟體工程師",
+        "jobNameSnippet": "資訊軟體工程師",
+        "jobNo": "11686443",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.7491881,
+        "lon": 120.3443756,
+        "link": {
+            "job": "https://www.104.com.tw/job/6yhbf",
+            "cust": "https://www.104.com.tw/company/ahgyxk0",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/6yhbf?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5
+        ],
+        "period": 4,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 55000,
+        "salaryLow": 40000,
+        "tags": {
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.32658141672245355,
+        "jobCat": [
+            2007002006,
+            2007001004,
+            2007001017
+        ],
+        "labels": [
+            "c@wf29",
+            "foreigners@full_fc_em_jbs",
+            "indexjob@ij005",
+            "c@graduates_welcome",
+            "c@wf8",
+            "c@wf3",
+            "association@j00018",
+            "association@j00014",
+            "c@wf1",
+            "c@wf2",
+            "c@wf18",
+            "45plus@45invited",
+            "c@wf7",
+            "association@j00004",
+            "association@j00002_002"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [
+            2,
+            64,
+            2048
+        ],
+        "employeeCount": 180,
+        "pcSkills": [
+            {
+                "code": "12001003006",
+                "description": "ASP.NET"
+            },
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003066",
+                "description": "Visual Studio"
+            },
+            {
+                "code": "12001003067",
+                "description": "Visual Studio .net"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12006001016",
+                "description": "鼎新"
+            },
+            {
+                "code": "12001003069",
+                "description": "WinForm"
+            },
+            {
+                "code": "12001003045",
+                "description": "Python"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/22824252000/logo.gif?v=20260519143136",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786410708,
+            "lastCustReplyTimestamp": 1784520976,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15153692": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1002014003,
+        "coIndustryDesc": "汽車及其零件製造業",
+        "custName": "崇瑋工業股份有限公司",
+        "custNo": "22824252000",
+        "description": "1.負責公司內部系統與 ERP 相關功能維護、問題排除。 \n2.協助 ERP 與周邊系統之資料處理、報表開發與欄位調整。 \n3.依需求進行 Web 系統、報表、查詢頁面及基本資料串接功能開發。 \n4.協助處理使用單位操作問題、異常查詢與系統測試。 \n5.協助 ERP 相關資料匯入匯出、SQL 查詢與基礎資料整理。 \n6.配合主管進行需求確認、程式修改、文件整理與上線支援。 \n7.維護既有系統穩定運作，並配合開發規範進行版本管理\n\n",
+        "descSnippet": "1.負責公司內部系統與 ERP 相關功能維護、問題排除。 \n2.協助 ERP 與周邊系統之資料處理、報表開發與欄位調整。 \n3.依需求進行 Web 系統、報表、查詢頁面及基本資料串接功能開發。 \n4.協助處理使用單位操作問題、異常查詢與系統測試。 \n5.協助 ERP 相關資料匯入匯出、SQL 查詢與基礎資料整理。 \n6.配合主管進行需求確認、程式修改、文件整理與上線支援。 \n7.維護既有系統穩定運作，並配合開發規範進行版本管理\n\n",
+        "mrtDist": 0,
+        "jobAddress": "萬金路8-6號",
+        "jobAddrNo": 6001016013,
+        "jobAddrNoDesc": "高雄市大社區",
+        "jobName": "資訊軟體副工程師",
+        "jobNameSnippet": "資訊軟體副工程師",
+        "jobNo": "15153692",
+        "jobRo": 1,
+        "jobType": 2,
+        "lat": 22.7490509,
+        "lon": 120.3444114,
+        "link": {
+            "job": "https://www.104.com.tw/job/90snw",
+            "cust": "https://www.104.com.tw/company/ahgyxk0",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/90snw?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 43000,
+        "salaryLow": 35000,
+        "tags": {
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf8": {
+                "desc": "",
+                "param": "wf8"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.4558020264827023,
+        "jobCat": [
+            2007001019,
+            2007001010
+        ],
+        "labels": [
+            "association@j00002_002",
+            "c@wf1",
+            "c@wf7",
+            "c@wf29",
+            "foreigners@full_fc_em_jbs",
+            "c@graduates_welcome",
+            "c@wf2",
+            "c@wf3",
+            "indexjob@ij005",
+            "association@j00018",
+            "c@wf18",
+            "association@j00014",
+            "c@wf8"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [
+            2,
+            64,
+            2048
+        ],
+        "employeeCount": 180,
+        "pcSkills": [
+            {
+                "code": "12001003006",
+                "description": "ASP.NET"
+            },
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003066",
+                "description": "Visual Studio"
+            },
+            {
+                "code": "12001003067",
+                "description": "Visual Studio .net"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12006001016",
+                "description": "鼎新"
+            },
+            {
+                "code": "12001003069",
+                "description": "WinForm"
+            },
+            {
+                "code": "12001003045",
+                "description": "Python"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/22824252000/logo.gif?v=20260519143136",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786725576,
+            "lastCustReplyTimestamp": 1779959158,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "5625296": {
+        "appearDate": "20260820",
+        "applyCnt": 2,
+        "coIndustry": 1002012001,
+        "coIndustryDesc": "自動控制相關業",
+        "custName": "安禹自動化股份有限公司",
+        "custNo": "84815021000",
+        "description": "中大型可程式控制器(PLC),自動控制工程設計應用為主, 有電腦基礎語言及網路架構經驗者尤佳，工作內容為可程式控制器 軟體/硬體現場試俥,產品技術支援和售後服務 。\n本公司提供完整工作職前之可程式控制器,自動化設備專業訓練。",
+        "descSnippet": "中大型可程式控制器(PLC),自動控制工程設計應用為主, 有電腦基礎語言及網路架構經驗者尤佳，工作內容為可程式控制器 軟體/硬體現場試俥,產品技術支援和售後服務 。\n本公司提供完整工作職前之可程式控制器,自動化設備專業訓練。",
+        "mrtDist": 0.16,
+        "jobAddress": "博愛二路366號4樓之5",
+        "jobAddrNo": 6001016011,
+        "jobAddrNoDesc": "高雄市左營區",
+        "jobName": "自動化技術工程師(南區)",
+        "jobNameSnippet": "自動化技術工程師(南區)",
+        "jobNo": "5625296",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.6649863,
+        "lon": 120.3035701,
+        "link": {
+            "job": "https://www.104.com.tw/job/3cki8",
+            "cust": "https://www.104.com.tw/company/12yoo91k",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/3cki8?channel=104rpt"
+        },
+        "major": [
+            "電機電子工程相關",
+            "資訊工程相關",
+            "電機電子維護相關"
+        ],
+        "mrt": "99004001013",
+        "mrtDesc": "捷運巨蛋站",
+        "optionEdu": [
+            4
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 60,
+        "salaryHigh": 9999999,
+        "salaryLow": 700000,
+        "tags": {
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf25": {
+                "desc": "",
+                "param": "wf25"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf11": {
+                "desc": "",
+                "param": "wf11"
+            },
+            "wf29": {
+                "desc": "",
+                "param": "wf29"
+            },
+            "wf18": {
+                "desc": "",
+                "param": "wf18"
+            },
+            "wf4": {
+                "desc": "",
+                "param": "wf4"
+            },
+            "landmark": {
+                "desc": "距捷運巨蛋站約160公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "08:45~18:00",
+        "hrBehaviorPR": 0.17210579465126571,
+        "jobCat": [
+            2008001005,
+            2009002003,
+            2007001009
+        ],
+        "labels": [
+            "c@wf7",
+            "c@wf25",
+            "c@graduates_welcome",
+            "c@wf1",
+            "c@wf3",
+            "c@wf2",
+            "c@wf11",
+            "c@wf29",
+            "c@wf18",
+            "indexjob@ij003",
+            "c@wf4"
+        ],
+        "languageRequirements": [
+            {
+                "language": 1,
+                "ability": {
+                    "listening": 4,
+                    "speaking": 4,
+                    "reading": 4,
+                    "writing": 8
+                }
+            }
+        ],
+        "acceptRole": [
+            2
+        ],
+        "employeeCount": 50,
+        "pcSkills": [
+            {
+                "code": "12001003008",
+                "description": "C"
+            },
+            {
+                "code": "12001003010",
+                "description": "C++"
+            },
+            {
+                "code": "12001003059",
+                "description": "Visual Basic"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12002003001",
+                "description": "AutoCAD"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/1000/84815021000/logo.jpg?v=20260120171603",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786555379,
+            "lastCustReplyTimestamp": 1784185660,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15270170": {
+        "appearDate": "20260820",
+        "applyCnt": 0,
+        "coIndustry": 1002012005,
+        "coIndustryDesc": "專用生產機械製造修配業",
+        "custName": "傑永省力股份有限公司",
+        "custNo": "81193652000",
+        "description": "1.熟OMRON&KEYENCE PLC人員.\n2.對機台控制及AIR管路熟悉者\n3.對HMI人機編輯熟悉者\n4.有完整自動化機器程式,人機程式及配線工作經驗者\n5.可隨時配合出差及加班者",
+        "descSnippet": "1.熟OMRON&KEYENCE PLC人員.\n2.對機台控制及AIR管路熟悉者\n3.對HMI人機編輯熟悉者\n4.有完整自動化機器程式,人機程式及配線工作經驗者\n5.可隨時配合出差及加班者",
+        "mrtDist": 0,
+        "jobAddress": "安東街113號",
+        "jobAddrNo": 6001016008,
+        "jobAddrNoDesc": "高雄市三民區",
+        "jobName": "PLC人機軟體工程師",
+        "jobNameSnippet": "PLC人機軟體工程師",
+        "jobNo": "15270170",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.6454323,
+        "lon": 120.2954538,
+        "link": {
+            "job": "https://www.104.com.tw/job/93aje",
+            "cust": "https://www.104.com.tw/company/11aslqu8",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/93aje?channel=104rpt"
+        },
+        "major": [
+            "電機電子維護相關"
+        ],
+        "mrt": "",
+        "mrtDesc": "",
+        "optionEdu": [
+            3,
+            4,
+            5,
+            6
+        ],
+        "period": 0,
+        "remoteWorkType": 0,
+        "s10": 50,
+        "salaryHigh": 55000,
+        "salaryLow": 40000,
+        "tags": {
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.02124516355962012,
+        "jobCat": [
+            2007001004,
+            2008001008,
+            2009002003
+        ],
+        "labels": [
+            "c@wf7",
+            "c@wf10",
+            "c@wf1"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 60,
+        "pcSkills": [
+            {
+                "code": "12004001027",
+                "description": "PLC"
+            }
+        ],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/2000/81193652000/logo.gif?v=20251124170232",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1785401232,
+            "lastCustReplyTimestamp": null,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "15218386": {
+        "appearDate": "20260820",
+        "applyCnt": 4,
+        "coIndustry": 1001004001,
+        "coIndustryDesc": "光電產業",
+        "custName": "向陽優能電力股份有限公司",
+        "custNo": "53084598000",
+        "description": "1、熟悉個人電腦、帳號管理(Windows AD)及其他辦公室資訊設備如印表機、視訊設備等軟硬體管理設定及故障排除。\n2、熟悉網路、伺服器與機房相關軟硬體管理(包含VMWare虛擬架構、Switch、防火牆、Storage、Mail Server、File Server、NAS等)、擅長使用Infra管理工具者。\n3、熟悉資訊安全相關業務、企業內部系統帳號與權限管理、伺服器備份備援之執行與管理。\n4、其他主管交辦事項。\n\n\n",
+        "descSnippet": "1、熟悉個人電腦、帳號管理(Windows AD)及其他辦公室資訊設備如印表機、視訊設備等軟硬體管理設定及故障排除。\n2、熟悉網路、伺服器與機房相關軟硬體管理(包含VMWare虛擬架構、Switch、防火牆、Storage、Mail Server、File Server、NAS等)、擅長使用Infra管理工具者。\n3、熟悉資訊安全相關業務、企業內部系統帳號與權限管理、伺服器備份備援之執行與管理。\n4、其他主管交辦事項。\n\n\n",
+        "mrtDist": 0.31,
+        "jobAddress": "中正二路222號10樓",
+        "jobAddrNo": 6001016001,
+        "jobAddrNoDesc": "高雄市新興區",
+        "jobName": "【高雄】資訊部主任",
+        "jobNameSnippet": "【高雄】資訊部主任",
+        "jobNo": "15218386",
+        "jobRo": 1,
+        "jobType": 0,
+        "lat": 22.630718,
+        "lon": 120.314831,
+        "link": {
+            "job": "https://www.104.com.tw/job/926ky",
+            "cust": "https://www.104.com.tw/company/odx75yo",
+            "applyAnalyze": "https://www.104.com.tw/jobs/apply/analysis/926ky?channel=104rpt"
+        },
+        "major": [],
+        "mrt": "99004002006",
+        "mrtDesc": "捷運文化中心站",
+        "optionEdu": [
+            3,
+            4
+        ],
+        "period": 6,
+        "remoteWorkType": 0,
+        "s10": 10,
+        "salaryHigh": 0,
+        "salaryLow": 0,
+        "tags": {
+            "wf3": {
+                "desc": "",
+                "param": "wf3"
+            },
+            "wf7": {
+                "desc": "",
+                "param": "wf7"
+            },
+            "wf2": {
+                "desc": "",
+                "param": "wf2"
+            },
+            "wf10": {
+                "desc": "",
+                "param": "wf10"
+            },
+            "wf1": {
+                "desc": "",
+                "param": "wf1"
+            },
+            "wf9": {
+                "desc": "",
+                "param": "wf9"
+            },
+            "landmark": {
+                "desc": "距捷運文化中心站約310公尺"
+            }
+        },
+        "s9": [
+            1
+        ],
+        "s5": 0,
+        "d3": "",
+        "hrBehaviorPR": 0.7584196611938774,
+        "jobCat": [
+            2007002005,
+            2007002009,
+            2007002001
+        ],
+        "labels": [
+            "association@j00025",
+            "c@wf3",
+            "c@wf7",
+            "c@wf2",
+            "c@wf10",
+            "association@j00013",
+            "c@wf1",
+            "association@j00021",
+            "association@j00017",
+            "45plus@45invited",
+            "c@wf9",
+            "association@j00004"
+        ],
+        "languageRequirements": [],
+        "acceptRole": [],
+        "employeeCount": 210,
+        "pcSkills": [],
+        "pddScore": 0,
+        "custLogo": "https://static.104.com.tw/b_profile/cust_picture/8000/53084598000/logo.jpg?v=20260424104040",
+        "jobSwitch": "on",
+        "isSave": false,
+        "interactionRecord": {
+            "lastProcessedResumeAtTime": 1786349608,
+            "lastCustReplyTimestamp": 1785293473,
+            "nowTimestamp": 1787198792
+        },
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    }
+}

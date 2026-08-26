@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}AI 職涯顧問 - JobHunter{% endblock %}
+
+{% block content %}
+<div class="p-8 h-screen flex flex-col">
+    
+    <!-- 頁面標題區 -->
+    <header class="mb-6 flex-shrink-0">
+        <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-3"></i> AI 職涯顧問
+        </h1>
+        <p class="text-gray-500 mt-2">直接問我問題，或是上傳你的履歷，讓我幫你分析最適合的職缺！</p>
+    </header>
+
+    <!-- 聊天室主體 -->
+    <div class="flex-1 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+        
+        <!-- 訊息對話區 -->
+        <div id="chat-box" class="flex-1 p-6 overflow-y-auto bg-slate-50 space-y-6">
+            
+            <!-- AI 開場白 -->
+            <div class="flex items-start">
+                <div class="bg-indigo-100 rounded-full w-10 h-10 flex items-center justify-center mr-3 shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-robot text-indigo-600"></i>
+                </div>
+                <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[75%]">
+                    <p class="text-gray-700 leading-relaxed">哈囉！我是你的專屬職涯顧問 👋<br>
+                    你可以問我目前抓了哪些職缺，或是點左下角的迴紋針 📎 上傳你的 PDF 履歷，我們來看看哪間公司最適合你！</p>
+                </div>
+            </div>
+            
+            <!-- 之後使用者的訊息或 AI 的回覆都會動態加在這邊 -->
+            
+        </div>
+
+        <!-- 底部輸入區 -->
+        <div class="p-4 bg-white border-t border-gray-200 flex items-end gap-3">
+            
+            <!-- 隱藏的檔案上傳區塊 (限制只能傳 PDF) -->
+            <input type="file" id="resume-upload" accept="application/pdf" class="hidden">
+            
+            <!-- 點擊觸發上傳的按鈕 -->
+            <button onclick="document.getElementById('resume-upload').click()" class="text-gray-400 hover:text-indigo-500 transition-colors p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-indigo-50 flex-shrink-0" title="上傳履歷">
+                <i class="fa-solid fa-paperclip text-lg"></i>
+            </button>
+
+            <!-- 輸入框 -->
+            <div class="flex-1 relative">
+                <textarea id="chat-input" rows="1" placeholder="輸入你想問的問題... (例如：幫我找高雄不用加班的工程師職缺)" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-xl px-4 py-3 transition-all resize-none overflow-hidden outline-none"></textarea>
+            </div>
+            
+            <!-- 發送按鈕 -->
+            <button id="send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl shadow-md shadow-indigo-500/30 transition-transform hover:-translate-y-0.5 flex items-center justify-center w-12 h-12 flex-shrink-0">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatBox = document.getElementById('chat-box');
+
+    function appendMessage(sender, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = sender === 'user' ? 'flex items-start justify-end' : 'flex items-start';
+        
+        let innerHTML = '';
+        if (sender === 'user') {
+            // 使用者的對話泡泡 (右側，藍底白字)
+            innerHTML = `
+                <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm max-w-[75%]">
+                    <p class="leading-relaxed whitespace-pre-wrap">${text}</p>
+                </div>
+                <div class="bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center ml-3 shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-user text-gray-500"></i>
+                </div>
+            `;
+        } else {
+            // AI 的對話泡泡 (左側，白底黑字)
+            innerHTML = `
+                <div class="bg-indigo-100 rounded-full w-10 h-10 flex items-center justify-center mr-3 shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-robot text-indigo-600"></i>
+                </div>
+                <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[75%] w-full markdown-body">
+                    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">${text}</p>
+                </div>
+            `;
+        }
+        
+        msgDiv.innerHTML = innerHTML;
+        chatBox.appendChild(msgDiv);
+        
+        // 自動捲動到最底部
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // 發送訊息到後端的函數
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // 1. 先把使用者的訊息畫到畫面上，並清空輸入框
+        appendMessage('user', message);
+        chatInput.value = '';
+        
+        // 為了避免重複發送，暫時禁用按鈕
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+        try {
+            // 2. 透過 Fetch API 呼叫 FastAPI 後端
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message }) // 對應 Pydantic 的 ChatRequest
+            });
+
+            const data = await response.json();
+
+            // 3. 收到結果後，把 AI 回覆畫到畫面上
+            if (data.status === 'success') {
+                appendMessage('ai', data.reply);
+            } else {
+                appendMessage('ai', '發生錯誤了：' + data.reply);
+            }
+
+        } catch (error) {
+            appendMessage('ai', '網路連線失敗，請稍後再試。');
+            console.error('Error:', error);
+        } finally {
+            // 恢復按鈕狀態
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+        }
+    }
+
+    // 綁定事件
+    sendBtn.addEventListener('click', sendMessage);
+    
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+{% endblock %}

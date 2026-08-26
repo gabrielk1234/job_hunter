@@ -1,0 +1,240 @@
+{
+    "corpImageRight": {
+        "corpImageRight": {
+            "imageUrl": "",
+            "link": ""
+        }
+    },
+    "header": {
+        "corpImageTop": {
+            "imageUrl": "",
+            "link": ""
+        },
+        "jobName": "資深軟體專案工程師 (高雄)",
+        "appearDate": "2026/08/10",
+        "custName": "台普威能源股份有限公司",
+        "custUrl": "https://www.104.com.tw/company/1a2x6blfgq",
+        "analysisType": 3,
+        "analysisUrl": "https://www.104.com.tw/jobs/apply/analysis/74tpb",
+        "hrBehaviorPR": 0.9174633792109652,
+        "isSaved": false,
+        "isFollowed": false,
+        "isApplied": false,
+        "applyDate": "",
+        "userApplyCount": 0
+    },
+    "contact": {
+        "hrName": "人資部",
+        "email": "meg.liu@rechargepower.com.tw,tailung.fu@tpeenergy.com.tw,mulder.chiang@rechargepower.com.tw",
+        "visit": "",
+        "phone": [],
+        "other": "",
+        "reply": ""
+    },
+    "environmentPic": {
+        "environmentPic": [
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_965576701558183310.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_965576701558183310.jpg?v=20260731140902",
+                "description": "形象牆"
+            },
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_962627717430173654.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_962627717430173654.jpg?v=20260731140902",
+                "description": "大廳"
+            },
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_890328564416881802.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_890328564416881802.jpg?v=20260731140902",
+                "description": "會議室"
+            },
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_962627717430173655.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_962627717430173655.jpg?v=20260731140902",
+                "description": "辦公室"
+            },
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_962627717430173656.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_962627717430173656.jpg?v=20260731140902",
+                "description": "員工休息區"
+            },
+            {
+                "thumbnailLink": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/s_965576701558190369.jpg?v=20260731140902",
+                "link": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/env/l_965576701558190369.jpg?v=20260731140902",
+                "description": "飲料零食自助區"
+            }
+        ],
+        "corpImageBottom": {
+            "imageUrl": "",
+            "link": ""
+        }
+    },
+    "condition": {
+        "acceptRole": {
+            "role": [
+                {
+                    "code": 2,
+                    "description": "應屆畢業生"
+                },
+                {
+                    "code": 64,
+                    "description": "原住民"
+                },
+                {
+                    "code": 2048,
+                    "description": "二度就業"
+                }
+            ],
+            "disRole": {
+                "needHandicapCompendium": false,
+                "disability": []
+            }
+        },
+        "workExp": "不拘",
+        "edu": "大學、碩士",
+        "major": [
+            "數學及電算機科學學科類",
+            "工程學科類"
+        ],
+        "language": [
+            {
+                "code": 1,
+                "language": "英文",
+                "ability": {
+                    "listening": "中等",
+                    "speaking": "中等",
+                    "reading": "中等",
+                    "writing": "中等"
+                }
+            },
+            {
+                "code": 2,
+                "language": "日文",
+                "ability": {
+                    "listening": "中等",
+                    "speaking": "中等",
+                    "reading": "中等",
+                    "writing": "中等"
+                }
+            }
+        ],
+        "localLanguage": [],
+        "specialty": [
+            {
+                "code": "12001003009",
+                "description": "C#"
+            },
+            {
+                "code": "12001003067",
+                "description": "Visual Studio .net"
+            },
+            {
+                "code": "12001004031",
+                "description": "MS SQL"
+            },
+            {
+                "code": "12001003045",
+                "description": "Python"
+            }
+        ],
+        "skill": [
+            {
+                "code": "11009002006",
+                "description": "系統整合分析"
+            },
+            {
+                "code": "11009002008",
+                "description": "軟體工程系統開發"
+            },
+            {
+                "code": "11009006002",
+                "description": "資料庫程式設計"
+            }
+        ],
+        "certificate": [],
+        "driverLicense": [],
+        "other": ""
+    },
+    "welfare": {
+        "tag": [
+            "年終獎金",
+            "三節獎金/禮品",
+            "零食櫃",
+            "咖啡吧",
+            "結婚禮金",
+            "生育津貼",
+            "國內旅遊",
+            "國外旅遊",
+            "部門聚餐",
+            "優於勞基法特休",
+            "員工團體保險",
+            "員工體檢假"
+        ],
+        "welfare": "【給你更多的，不只是工作】\n\n▌完善的福利制度，支持您每個人生階段\n- 三節禮金與禮品，過節不怕沒驚喜，小確幸每年不缺席！\n- 完善的獎金制度，激勵優秀表現，讓努力看得見\n- 結婚、生育、急難慰問等關懷禮金，陪伴員工度過每一個重要時刻 \n\n▌ 上班不無聊，多元辦公體驗\n- 精緻每年海外旅遊員工旅遊，拓展視野、凝聚團隊\n   ◆2023年日本\n   ◆2024年泰國/日本 \n   ◆2025年菲律賓/韓國 \n   ◆2026年越南/北海道\n- 休息區免費咖啡零食和遊戲機，每天補給能量沒煩惱 \n- 聚餐、團建活動多到選不完，工作夥伴也是生活好友 \n- 私密電話亭與寬敞明亮的辦公空間，提供專注、專業且自在的工作環境\n\n▌重視工作與生活的平衡，自由掌控你的節奏\n- 彈性上下班，時間你自己安排，通勤靈活安排\n- 每年比勞基法規定再多7天特休，讓工作與生活取得良好平衡，身心都滿電！\n\n▌全面照顧，讓你無後顧之憂\n- 健康檢查補助＋完整保險制度，守護員工身心健康 \n- 完善的勞保、健保、勞退制度，保障基本權益\n\n▌持續成長，與公司共同進步\n- 完整新人訓練，協助迅速融入團隊文化\n- 多元內訓外訓，幫你職涯多開幾條路 \n- 進修補助大力挺，想學什麼、公司來支持！",
+        "legalTag": [
+            "特別休假",
+            "員工體檢"
+        ]
+    },
+    "jobDetail": {
+        "jobDescription": "台普威能源是雲豹能源集團旗下的電池儲能系統整合商(BESSI)，也是國內少數能提供電網級儲能系統的公司，目前提供台灣BESS的項目開發設計、安裝施工、營運管理和維護服務，未來我們放眼亞太，若您對綠色產業有興趣並具備以下條件，歡迎加入我們的團隊！\n\n職務說明\n1. 能源領域軟體的功能應用、操作、開發、測試。 \n2. 依專案需求負責現場圖控與通訊設備軟硬體架構及模組之設計、規劃、施作，並控管專案進度。 \n3. 研發能源監控系統(Supervisory Control And Data Acquisition, SCADA)。 \n4. 現場系統軟硬體設備管理維護、測試與修改。 \n5. 協助團隊彙整文件、設計圖、及相關資料，提供作業上的協助。\n\n工作技能\n1. 主動負責、具備良好協調溝通能力與尋找解決方案的能力\n2. 熟微軟作業平台、具網路通訊知識、有資料庫觀念、懂C#、python尤佳、具圖控軟體/PLC程式經驗(InTouch、WinCC、西門子PLC)尤佳。 \n3. 依意願有機會出差至日本東京和台北\n\n",
+        "jobCategory": [
+            {
+                "code": "2007001004",
+                "description": "軟體工程師"
+            },
+            {
+                "code": "2008001005",
+                "description": "電機技師／工程師"
+            },
+            {
+                "code": "2009002003",
+                "description": "自動控制工程師"
+            }
+        ],
+        "salary": "待遇面議",
+        "salaryMin": 0,
+        "salaryMax": 0,
+        "salaryType": 10,
+        "jobType": 1,
+        "workType": [],
+        "addressNo": "6001016002",
+        "addressRegion": "高雄市前金區",
+        "addressArea": "高雄市",
+        "addressDetail": "中正四路151號12樓1B",
+        "industryArea": "",
+        "longitude": "120.2963162",
+        "latitude": "22.6291879",
+        "manageResp": "管理人數未定",
+        "businessTrip": "需出差，一年累積時間未定",
+        "workPeriod": {
+            "shifts": {
+                "日班": []
+            },
+            "note": "0830~17:30"
+        },
+        "workPeriodTags": [],
+        "vacationPolicy": "週休二日",
+        "startWorkingDay": "可年後上班",
+        "hireType": 0,
+        "delegatedRecruit": "",
+        "needEmp": "1~3人",
+        "landmark": "距捷運前金站約180公尺",
+        "remoteWork": null
+    },
+    "switch": "on",
+    "custLogo": "https://static.104.com.tw/b_profile/cust_picture/0906/130000000160906/logo.jpg?v=20260731140902",
+    "postalCode": "801",
+    "closeDate": "",
+    "industry": "電力供應業",
+    "custNo": "1a2x6blfgq",
+    "reportUrl": "https://www.104.com.tw/feedback?category=2&custName=%E5%8F%B0%E6%99%AE%E5%A8%81%E8%83%BD%E6%BA%90%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8&jobName=%E8%B3%87%E6%B7%B1%E8%BB%9F%E9%AB%94%E5%B0%88%E6%A1%88%E5%B7%A5%E7%A8%8B%E5%B8%AB+%28%E9%AB%98%E9%9B%84%29",
+    "industryNo": "1014004001",
+    "employees": "80人",
+    "chinaCorp": false,
+    "interactionRecord": {
+        "lastProcessedResumeAtTime": 1787187873,
+        "lastCustReplyTimestamp": 1787038378,
+        "nowTimestamp": 1787203502
+    }
+}

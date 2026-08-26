@@ -1,0 +1,45 @@
+key (int)
+jobName (str)
+appearDate (date)
+custName (str)
+custUrl (str)
+analysisUrl (str)
+hrBehaviorPR (float)
+contact -> hrName (str)
+contact -> email (str)
+contact -> phone (str)
+contact -> other (str)
+condition -> acceptRole -> role (str) 將role串在一起變str
+condition -> workExp (str)
+condition -> edu (str)
+condition -> major (str)
+condition -> language (str) 英文(聽力:中等,口說:中等,閱讀:中等,寫:中等),日文(聽力:中等,口說:中等,閱讀:中等,寫:中等)
+condition -> specialty (str) 將description串在一起變str
+condition -> skill (str) 將description串在一起變str
+condition -> certificate (str) 將name串在一起變str
+condition -> driverLicense (str) 串在一起變str
+condition -> other (str)
+welfare -> tag (str) 串在一起變str
+welfare -> welfare (str)
+welfare -> legalTag (str) 串在一起變str
+jobDetail -> jobDescription (str)
+jobDetail -> jobCategory (str) 將description串在一起變str
+jobDetail -> salary (str)
+jobDetail -> salaryMin (int)
+jobDetail -> salaryMax (int)
+jobDetail -> salaryType (int) 50:月薪 60:年薪 10:待遇面議(40000以上) 30:時薪
+jobDetail -> jobType (int) 0:兼職 1:全職
+jobDetail -> addressRegion+addressDetail (str)
+jobDetail -> industryArea (str)
+jobDetail -> landmark (str)
+jobDetail -> latitude,longtitude (str)
+jobDetail -> businessTrip (str)
+jobDetail -> WorkPeriod -> shifts + if has note
+jobDetail -> vacationPolicy (str)
+jobDetail -> startWorkingDay (str)
+jobDetail -> needEmp (str)
+jobDetail -> remoteWork -> description (str) null就沒有後面的description,1:完全遠端,2:部分遠端
+industry (str)
+interactionRecord -> lastProcessedResumeAtTime
+interactionRecord -> lastCustReplyTimestamp
+interactionRecord -> nowTimestamp
