@@ -37,25 +37,18 @@ def get_sqlite_jobs():
         cursor = conn.cursor()
         
         # 撈取前 50 筆資料避免畫面卡頓
-        cursor.execute("SELECT job_id, job_data FROM job_details LIMIT 50")
+        cursor.execute("SELECT job_id, job_document, job_name, cust_name FROM job_documents LIMIT 50")
         rows = cursor.fetchall()
         
         jobs = []
         for row in rows:
-            job_id, job_data_str = row
+            job_id, job_data_str, job_name, cust_name = row
             try:
-                # 將字串轉回 JSON 字典
-                job_json = json.loads(job_data_str)
-                
-                # 嘗試從你的 JSON 結構中挖出公司名跟職缺名 (防呆處理)
-                cust_name = job_json.get("header", {}).get("custName", "未知公司") if isinstance(job_json, dict) else "未知公司"
-                job_name = job_json.get("header", {}).get("jobName", "未知職缺") if isinstance(job_json, dict) else "未知職缺"
-                
                 jobs.append({
                     "job_id": job_id,
                     "custName": cust_name,
                     "jobName": job_name,
-                    "raw_json": job_json
+                    "raw_json": job_data_str
                 })
             except Exception as e:
                 print(f"解析 JSON 失敗 ID: {job_id}")
@@ -73,7 +66,7 @@ def get_chroma_jobs():
     try:
         # 連線到本機的 ChromaDB 資料夾
         client = chromadb.PersistentClient(path="./my_job_db")
-        collection = client.get_collection(name="jobs_collection")
+        collection = client.get_collection(name="job_chunks")
         
         # 撈取前 50 筆
         results = collection.get(limit=50)
@@ -105,9 +98,9 @@ async def websocket_scrape(websocket: WebSocket):
         # 讀取設定檔與連線資料庫
         config_file = './config.json'
         sqlite_db = 'all_jobs.db'
-        table_name = 'job_details'
+        table_name = 'job_documents'
         chroma_db = './my_job_db'
-        chroma_collection = 'jobs_collection'
+        chroma_collection = 'job_chunks'
 
         with open(config_file, 'r', encoding='utf-8') as f:
             config_json = json.load(f)
@@ -115,7 +108,14 @@ async def websocket_scrape(websocket: WebSocket):
 
         conn = sqlite3.connect(sqlite_db)
         cursor = conn.cursor()
-        cursor.execute(f'CREATE TABLE IF NOT EXISTS {table_name} (job_id TEXT PRIMARY KEY, job_data TEXT)')
+        cursor.execute(f'''
+            CREATE TABLE IF NOT EXISTS {table_name} (
+                job_id TEXT PRIMARY KEY,
+                job_document TEXT,
+                job_name TEXT,
+                cust_name TEXT
+            )
+        ''')
         conn.commit()
 
         client = chromadb.PersistentClient(path=chroma_db)
@@ -155,7 +155,7 @@ async def websocket_scrape(websocket: WebSocket):
         await websocket.send_json({"log": f"📊 共找到 {total_jobs} 個職缺，準備開始抓取細節！", "progress": 15})
 
         import random as rd
-        from tools.pharse import get_document, get_metadata
+        from tools.pharse import get_document, get_metadata,create_chunks
 
         for idx, job in enumerate(job_json, 1):
             job_id = job['jobNo']
@@ -169,15 +169,28 @@ async def websocket_scrape(websocket: WebSocket):
             if job_detail_response.status_code == 200:
                 job_detail_json = job_detail_response.json().get('data')
                 
-                # SQLite 儲存
-                job_json_str = json.dumps(job_detail_json, ensure_ascii=False)
-                cursor.execute(f'INSERT OR REPLACE INTO {table_name} (job_id, job_data) VALUES (?, ?)', (job_id, job_json_str))
-                conn.commit()
-                
                 # ChromaDB 儲存
                 documents = get_document(job_detail_json)
                 metadata = get_metadata(job_detail_json)
-                collection.add(documents=[documents], metadatas=[metadata], ids=[str(job_id)])
+                chunks = create_chunks(job_id=job_id,full_document=documents,base_metadata=metadata)
+                
+                chunk_ids = [str(c['ids']) for c in chunks]
+                chunk_documents = [c['text'] for c in chunks]
+                chunk_metadatas = [c['metadata'] for c in chunks]
+                collection.add(
+                    documents=chunk_documents, 
+                    metadatas=chunk_metadatas, 
+                    ids=chunk_ids
+                )
+                
+                # SQLite 儲存
+                job_name = metadata['jobName']
+                cust_name = metadata['custName']
+                cursor.execute(f'''
+                    INSERT OR REPLACE INTO {table_name} (job_id, job_document,job_name,cust_name) 
+                    VALUES (?, ?, ?, ?)
+                ''', (id, documents,job_name,cust_name))
+                conn.commit()
                 
                 # 計算即時進度比例
                 progress_percent = int(15 + (idx / total_jobs) * 85)
@@ -245,10 +258,10 @@ def get_assistant(request: Request):
 def chat_endpoint(req: ChatRequest):
     # 從 config 中抓取 API Key
     try:
-        with open('./config.json', 'r', encoding='utf-8') as f:
-            config_data = json.load(f)
+        with open('./apikey.json','r',encoding='utf-8') as f:
+            api_key_data = json.load(f)
     
-        api_key = config_data.get('gemini_api_key', '')
+        api_key = api_key_data.get('gemini_api_key', '')
         
         from tools.llm_agent import ask_gemini
     

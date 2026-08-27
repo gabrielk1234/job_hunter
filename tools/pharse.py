@@ -1,4 +1,5 @@
 import re
+from tools.myown_tools import flatten
 
 def get_document(job_json):
     # 電話號碼
@@ -151,6 +152,7 @@ def get_metadata(job_json):
     return meta_data
 
 def create_chunks(job_id, full_document, base_metadata):
+    full_document = flatten(full_document)
     
     # 2. 準備用來戴帽子的全局變數
     cust_name = base_metadata['custName']
@@ -159,7 +161,7 @@ def create_chunks(job_id, full_document, base_metadata):
     # 3. 用正規表達式 (Regex) 按 "## " 把文章切開
     # 這邊會切出包含標題和內容的 list
     raw_sections = re.split(r'\n## ', full_document)
-    print(len(raw_sections))
+    print(f"切割後的chunks數量(包括頭):{len(raw_sections)}")
     
     chunks_for_chroma = []
     
@@ -186,7 +188,7 @@ def create_chunks(job_id, full_document, base_metadata):
         chunk_meta['job_id'] = job_id
         chunk_meta['chunk_type'] = section_title # 順便記一下這塊是福利還是條件
         
-        ids = f"{job_id}_{idx+1}"
+        ids = f"{job_id}_{idx}"
         
         chunks_for_chroma.append({
             "text": enriched_text,
