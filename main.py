@@ -5,6 +5,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from pydantic import BaseModel
+from tools.myown_tools import flatten
 import asyncio
 import sqlite3
 import requests
@@ -48,7 +49,7 @@ def get_sqlite_jobs():
                     "job_id": job_id,
                     "custName": cust_name,
                     "jobName": job_name,
-                    "raw_json": job_data_str
+                    "raw_json": flatten(job_data_str)
                 })
             except Exception as e:
                 print(f"解析 JSON 失敗 ID: {job_id}")

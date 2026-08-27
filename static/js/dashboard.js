@@ -4,11 +4,11 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 async function fetchSQLiteData() {
     const tbody = document.getElementById('sqlite-table-body');
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 SQLite 撈取資料...</td></tr>`;
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/sqlite-jobs`);
         const result = await response.json();
-        
+
         if (result.status === 'success' && result.data.length > 0) {
             renderSQLiteTable(result.data);
         } else {
@@ -22,11 +22,11 @@ async function fetchSQLiteData() {
 async function fetchChromaData() {
     const tbody = document.getElementById('chroma-table-body');
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 ChromaDB 撈取向量資料...</td></tr>`;
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/chroma-jobs`);
         const result = await response.json();
-        
+
         if (result.status === 'success' && result.data.length > 0) {
             renderChromaTable(result.data);
         } else {
@@ -39,10 +39,10 @@ async function fetchChromaData() {
 
 function renderSQLiteTable(data) {
     const sqliteBody = document.getElementById('sqlite-table-body');
-    
+
     // 更新總計數量標籤
     const titleRow = document.getElementById('sqlite-total-count');
-    if(titleRow) titleRow.innerText = `總計: ${data.length} 筆`;
+    if (titleRow) titleRow.innerText = `總計: ${data.length} 筆`;
     console.log(data.length);
     sqliteBody.innerHTML = data.map(row => `
         <tr class="hover:bg-indigo-50 transition-colors group">
@@ -61,10 +61,10 @@ function renderSQLiteTable(data) {
 
 function renderChromaTable(data) {
     const chromaBody = document.getElementById('chroma-table-body');
-    
+
     // 更新統計數字
     const countDisplay = document.getElementById('chroma-doc-count');
-    if(countDisplay) countDisplay.innerHTML = `${data.length} <span class="text-sm font-normal text-green-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span>`;
+    if (countDisplay) countDisplay.innerHTML = `${data.length} <span class="text-sm font-normal text-green-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span>`;
 
     chromaBody.innerHTML = data.map(row => {
         // 防呆處理，避免 metadata 為空導致程式崩潰
@@ -91,7 +91,7 @@ function renderChromaTable(data) {
             <td class="px-6 py-4 text-gray-600 font-semibold">${salary}</td>
             <td class="px-6 py-4 text-gray-600 font-semibold">${hrBehaviorPR.toFixed(2)}</td>
             <td class="px-6 py-4 text-right">
-                <button onclick='openModal(${JSON.stringify(JSON.stringify(row, null, 4)).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-secondary hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                <button onclick='openModal(${JSON.stringify(row).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-secondary hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
                     查看 Metadata
                 </button>
             </td>
@@ -103,57 +103,63 @@ function renderChromaTable(data) {
 function switchTab(tabId) {
     // 1. 切換頁籤前，先清空搜尋框並恢復所有隱藏的表格資料
     const searchInput = document.getElementById('global-search');
-    if(searchInput) {
+    if (searchInput) {
         searchInput.value = '';
         handleSearch('');
     }
 
     // 2. 隱藏所有的 tab 內容
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    
+
     // 3. 把所有的側邊欄按鈕恢復成「灰暗狀態」 (加上防呆檢查，即使按鈕被刪除也不會報錯)
     const btnSqlite = document.getElementById('btn-sqlite');
     const btnChroma = document.getElementById('btn-chroma');
-    
+
     const inactiveClass = "w-full flex items-center px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200";
-    
+
     if (btnSqlite) btnSqlite.className = inactiveClass;
     if (btnChroma) btnChroma.className = inactiveClass;
-    
+
     // 4. 顯示指定的 tab 內容
     const activeTab = document.getElementById(`tab-${tabId}`);
-    if(activeTab) activeTab.classList.add('active');
-    
+    if (activeTab) activeTab.classList.add('active');
+
     // 5. 更改上方的標題文字
     const titles = {
         'sqlite': 'SQLite 原始資料庫',
         'chroma': 'ChromaDB 向量資料庫'
     };
     const pageTitle = document.getElementById('page-title');
-    if(pageTitle && titles[tabId]) {
+    if (pageTitle && titles[tabId]) {
         pageTitle.innerText = titles[tabId];
     }
 
     // 6. 將被選中的側邊欄按鈕變成「發亮的靛藍色」
     const activeBtn = document.getElementById(`btn-${tabId}`);
-    if(activeBtn) {
+    if (activeBtn) {
         activeBtn.className = "w-full flex items-center px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition-all duration-200";
     }
 }
 
-function openModal(jsonObj, idText) {
+function openModal(data, idText) {
     const modal = document.getElementById('json-modal');
     const modalContent = document.getElementById('modal-content');
-    
+
     document.getElementById('modal-job-id').innerText = idText;
-    
-    // 判斷傳入的是字串還是物件，轉成漂亮的 JSON 字串
-    const formattedJson = typeof jsonObj === 'string' ? 
-        JSON.stringify(JSON.parse(jsonObj), null, 4) : 
-        JSON.stringify(jsonObj, null, 4);
-        
-    document.getElementById('json-code-block').innerText = formattedJson;
-    
+
+    // 判斷傳進來的是物件還是字串
+    console.log('Data type:', typeof data);
+    let displayContent = '';
+    if (typeof data === 'object' && data !== null) {
+        // 如果是 JSON 物件，維持原本的縮排排版
+        displayContent = JSON.stringify(data, null, 4);
+    } else {
+        // 如果是純字串，就直接原樣貼上
+        displayContent = data;
+    }
+
+    document.getElementById('json-code-block').innerText = displayContent;
+
     modal.classList.remove('hidden');
     setTimeout(() => {
         modal.classList.remove('opacity-0');
@@ -164,16 +170,16 @@ function openModal(jsonObj, idText) {
 function closeModal() {
     const modal = document.getElementById('json-modal');
     const modalContent = document.getElementById('modal-content');
-    
+
     modal.classList.add('opacity-0');
     modalContent.classList.add('scale-95');
-    
+
     setTimeout(() => {
         modal.classList.add('hidden');
     }, 300);
 }
 
-document.getElementById('json-modal').addEventListener('click', function(e) {
+document.getElementById('json-modal').addEventListener('click', function (e) {
     if (e.target === this) closeModal();
 });
 
@@ -185,10 +191,10 @@ function fillInput(text) {
 function handleSearch(keyword) {
     // 為了實現大小寫不敏感的搜尋，統一轉成小寫，並清除頭尾空白
     keyword = keyword.toLowerCase().trim();
-    
+
     // 知道現在使用者正在看哪個頁籤
     const activeTab = document.querySelector('.tab-content.active').id;
-    
+
     let tbodyId = '';
     if (activeTab === 'tab-sqlite') {
         tbodyId = 'sqlite-table-body';
@@ -203,18 +209,18 @@ function handleSearch(keyword) {
 
     // 抓出表格所有的資料列 <tr>
     const rows = tbody.querySelectorAll('tr');
-    
+
     rows.forEach(row => {
         // 防呆：如果只有一個 <td>，通常是 "正在載入..." 或 "錯誤訊息" 的提示列，跳過不處理
-        if(row.cells.length === 1) return; 
-        
+        if (row.cells.length === 1) return;
+
         // 只搜索id，公司名稱以及職缺名稱
         const jobId = row.cells[0].innerText.toLowerCase();
         const custName = row.cells[1].innerText.toLowerCase();
         const jobName = row.cells[2].innerText.toLowerCase();
 
         const searchTarget = `${jobId} ${custName} ${jobName}`;
-        
+
         // 判斷是否「包含」關鍵字
         if (searchTarget.includes(keyword)) {
             row.style.display = ''; // 包含的話，取消隱藏，正常顯示
@@ -243,16 +249,16 @@ function handleChatSubmit(e) {
         </div>
     `;
     chatContainer.appendChild(userMsg);
-    
+
     input.value = '';
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     setTimeout(() => {
         const aiMsg = document.createElement('div');
         aiMsg.className = "flex space-x-3";
-        
+
         let responseText = "我目前只是一個靜態的 HTML 介面喔！等你把 Python 後端的 FastAPI 或 Flask 寫好，串接 OpenAI API 並且透過 `collection.query()` 搜尋 ChromaDB 後，就能把真正的回答傳送回這裡了！🚀";
-        
+
         aiMsg.innerHTML = `
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs shadow-sm">
                 AI
@@ -270,10 +276,10 @@ function handleChatSubmit(e) {
 window.onload = () => {
     fetchSQLiteData();
     fetchChromaData();
-    
+
     // 綁定 ChromaDB 頁籤的「重新載入」按鈕
     const reloadBtn = document.querySelector('#tab-chroma button');
-    if(reloadBtn) {
+    if (reloadBtn) {
         reloadBtn.onclick = fetchChromaData;
     }
 };
