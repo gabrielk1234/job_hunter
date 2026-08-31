@@ -55,9 +55,26 @@
                 <i class="fa-solid fa-robot w-6"></i>
                 <span class="font-medium ml-2">AI 職涯顧問</span>
             </a>
+
+            <a href="/matches" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 {% if active_page == 'matches' %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 {% else %} text-gray-400 hover:bg-gray-800 hover:text-white {% endif %}">
+                <i class="fa-solid fa-tag w-6"></i>
+                <span class="font-medium ml-2">職缺匹配</span>
+            </a>
         {% endif %}
 
     </nav>
+
+    <div class="p-4 border-t border-gray-800 mt-auto">
+        <!-- 點擊跳轉到 /profile 頁面 -->
+        <a href="/profile" class="flex items-center p-2 rounded-xl hover:bg-gray-800 transition-all duration-200 group {% if active_page == 'profile' %} bg-gray-800 {% endif %}">
+            <!-- 用 DiceBear API 隨便抓個可愛的假頭像 -->
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=JobHunter" alt="User Avatar" class="w-10 h-10 rounded-full bg-indigo-100 border-2 border-transparent group-hover:border-indigo-500 transition-all">
+            <div class="ml-3">
+                <p class="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">User</p>
+                <p class="text-xs text-gray-400">更新履歷 Profile</p>
+            </div>
+        </a>
+    </div>
     
     <div class="p-4 border-t border-gray-800 text-xs text-gray-500 text-center">
         &copy; 2026 JobHunter System

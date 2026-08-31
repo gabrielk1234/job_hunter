@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}JobHunter - 履歷健檢分析{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-8">
+    
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">履歷深度解析與健檢報告</h1>
+            <p class="text-gray-500 mt-2">上傳履歷，AI 顧問將為您進行市場競爭力評估與職缺投遞建議。</p>
+        </div>
+        <div class="h-16 w-16 rounded-full bg-indigo-100 border-4 border-white shadow-lg overflow-hidden flex-shrink-0">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=JobHunter" alt="User Avatar" class="w-full h-full object-cover">
+        </div>
+    </div>
+
+    <!-- 區塊一：上傳區 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+        <form id="uploadForm" class="space-y-4">
+            <!-- 檔案上傳 -->
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 hover:border-indigo-400 transition-colors cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-regular fa-file-pdf text-4xl text-gray-400 mb-3"></i>
+                <p class="text-gray-600 font-medium">點擊或拖曳上傳 PDF 履歷</p>
+                <p class="text-xs text-gray-400 mt-1">支援 .pdf 格式</p>
+                <input type="file" id="fileInput" name="file" accept=".pdf" class="hidden" onchange="handleFileSelect(event)">
+            </div>
+            
+            <!-- 顯示選取的檔案名稱 -->
+            <div id="fileDisplay" class="hidden flex items-center p-3 bg-indigo-50 text-indigo-700 rounded-lg text-sm">
+                <i class="fa-solid fa-file-lines mr-2"></i>
+                <span id="fileName" class="font-medium"></span>
+                <button type="button" onclick="clearFile(event)" class="ml-auto text-indigo-400 hover:text-indigo-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- 純文字輸入 -->
+            <div class="relative py-2">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="bg-white px-3 text-sm text-gray-500">或直接貼上純文字</span>
+                </div>
+            </div>
+            
+            <textarea id="textInput" name="text" rows="5" class="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm" placeholder="請將您的履歷內容貼在這裡..."></textarea>
+            
+            <!-- 按鈕區 -->
+            <div class="flex justify-end">
+                <button type="button" id="submitBtn" onclick="submitProfile()" class="px-6 py-2.5 bg-gray-900 hover:bg-black text-white font-medium rounded-lg shadow-md transition-all flex items-center">
+                    <i class="fa-solid fa-microchip mr-2"></i>
+                    執行 AI 深度健檢
+                </button>
+            </div>
+        </form>
+        
+        <!-- 載入動畫 (隱藏) -->
+        <div id="loadingOverlay" class="hidden mt-4 p-6 bg-gray-50 text-gray-700 rounded-xl border border-gray-100 flex flex-col items-center justify-center space-y-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span class="font-medium">顧問正在閱讀並評估您的履歷...</span>
+            <span class="text-xs text-gray-400">大約需要 5-10 秒，請稍候</span>
+        </div>
+    </div>
+
+    <!-- 區塊二：解析結果顯示區 -->
+    <div id="resultCard" class="hidden space-y-6">
+        
+        <!-- 顧問總結 -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm border-l-4 border-l-gray-800">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Executive Summary / 顧問總結</h3>
+            <p id="res-summary" class="text-gray-800 font-medium text-lg leading-relaxed"></p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 優勢 -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h3 class="text-sm font-bold text-emerald-600 mb-4 flex items-center border-b border-gray-100 pb-2">
+                    <i class="fa-solid fa-arrow-trend-up mr-2"></i> 市場競爭優勢
+                </h3>
+                <ul id="res-strengths" class="space-y-2 text-sm text-gray-700 list-disc list-inside"></ul>
+            </div>
+
+            <!-- 弱點 -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h3 class="text-sm font-bold text-rose-500 mb-4 flex items-center border-b border-gray-100 pb-2">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i> 潛在風險與 HR 疑慮
+                </h3>
+                <ul id="res-weaknesses" class="space-y-2 text-sm text-gray-700 list-disc list-inside"></ul>
+            </div>
+        </div>
+
+        <!-- 核心能力 & 職缺建議 -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-6">
+            <div class="flex-1">
+                <h3 class="text-sm font-bold text-gray-800 mb-3">核心賣點 (Core Competencies)</h3>
+                <div id="res-competencies" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="hidden md:block w-px bg-gray-100"></div>
+            <div class="flex-1">
+                <h3 class="text-sm font-bold text-gray-800 mb-3">建議投遞職缺 (Recommended Roles)</h3>
+                <div id="res-roles" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+
+        <!-- 履歷修改建議 -->
+        <div class="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 shadow-sm">
+            <h3 class="text-sm font-bold text-indigo-800 mb-4 flex items-center">
+                <i class="fa-solid fa-pen-to-square mr-2"></i> 履歷優化具體建議
+            </h3>
+            <ul id="res-advice" class="space-y-3 text-sm text-gray-700 list-decimal list-inside"></ul>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    let selectedFile = null;
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileDisplay').classList.remove('hidden');
+            document.getElementById('textInput').value = '';
+            document.getElementById('textInput').disabled = true;
+            document.getElementById('textInput').classList.add('bg-gray-100', 'cursor-not-allowed');
+        }
+    }
+
+    function clearFile(event) {
+        event.stopPropagation();
+        selectedFile = null;
+        document.getElementById('fileInput').value = '';
+        document.getElementById('fileDisplay').classList.add('hidden');
+        document.getElementById('textInput').disabled = false;
+        document.getElementById('textInput').classList.remove('bg-gray-100', 'cursor-not-allowed');
+    }
+
+    async function submitProfile() {
+        const textInput = document.getElementById('textInput').value.trim();
+        
+        if (!selectedFile && textInput === '') {
+            alert('請上傳 PDF 檔案或貼上履歷文字！');
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loadingOverlay');
+        const resultCard = document.getElementById('resultCard');
+        
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        loading.classList.remove('hidden');
+        resultCard.classList.add('hidden');
+
+        try {
+            const formData = new FormData();
+            formData.append('user_id', 'default_user');
+            
+            if (selectedFile) {
+                formData.append('file', selectedFile);
+            } else {
+                formData.append('text', textInput);
+            }
+
+            const response = await fetch('/api/parse-profile', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                console.log("Parsed Data:", result.data);
+                renderResult(result.data);
+            } else {
+                alert('解析失敗：' + result.message);
+            }
+            
+        } catch (error) {
+            console.error('上傳錯誤:', error);
+            alert('伺服器連線錯誤或回傳資料無法解析，請查看 Console！');
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            loading.classList.add('hidden');
+        }
+    }
+
+    function renderResult(data) {
+        // 渲染總結
+        document.getElementById('res-summary').textContent = data.candidate_summary || '無法產生總結。';
+
+        // 渲染清單的共用函式 (優勢、弱點、建議)
+        const renderList = (containerId, items, emptyMsg) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if(!items || !Array.isArray(items) || items.length === 0) {
+                container.innerHTML = `<li class="text-gray-400 italic text-sm">${emptyMsg}</li>`;
+                return;
+            }
+            
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "pl-1";
+                li.textContent = item;
+                container.appendChild(li);
+            });
+        };
+
+        renderList('res-strengths', data.strengths, '未發現明顯亮點');
+        renderList('res-weaknesses', data.weaknesses_or_risks, '無明顯風險');
+        renderList('res-advice', data.resume_advice, '目前無需修改建議');
+
+        // 渲染標籤的共用函式 (核心能力、職缺方向)
+        const renderTags = (containerId, items, styleClass) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if(!items || !Array.isArray(items) || items.length === 0) {
+                container.innerHTML = `<span class="text-gray-400 text-sm italic">無相關資料</span>`;
+                return;
+            }
+            
+            items.forEach(item => {
+                const span = document.createElement('span');
+                span.className = `px-3 py-1.5 rounded-lg text-xs font-semibold ${styleClass}`;
+                span.textContent = item;
+                container.appendChild(span);
+            });
+        };
+
+        renderTags('res-competencies', data.core_competencies, 'bg-gray-100 text-gray-700 border border-gray-200');
+        renderTags('res-roles', data.recommended_roles, 'bg-indigo-50 text-indigo-700 border border-indigo-100');
+        
+        // 顯示結果卡片
+        document.getElementById('resultCard').classList.remove('hidden');
+    }
+
+    // 頁面載入時，嘗試去後端抓取已經存在的履歷資料
+    window.onload = async function() {
+        try {
+            const response = await fetch('/api/get-profile?user_id=default_user');
+            const result = await response.json();
+            if (result.status === 'success' && result.data) {
+                renderResult(result.data);
+            }
+        } catch (e) {
+            console.log("尚無儲存的履歷資料");
+        }
+    }
+</script>
+{% endblock %}

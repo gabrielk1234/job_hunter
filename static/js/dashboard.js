@@ -1,16 +1,25 @@
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
+// 設定目前頁碼跟一頁要抓幾筆
+let currentSqlitePage = 1;
+let currentChromaPage = 1;
+const ITEMS_PER_PAGE = 20; // 改成一頁 20 筆畫面比較好看，不會太長
+
+// ChromaDB 篩選條件變數
+let filterSalary = 0;
+let filterHrPr = 0;
+
 async function fetchSQLiteData() {
     const tbody = document.getElementById('sqlite-table-body');
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 SQLite 撈取資料...</td></tr>`;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/sqlite-jobs`);
+        const response = await fetch(`${API_BASE_URL}/sqlite-jobs?page=${currentSqlitePage}&limit=${ITEMS_PER_PAGE}`);
         const result = await response.json();
 
         if (result.status === 'success' && result.data.length > 0) {
-            renderSQLiteTable(result.data);
+            renderSQLiteTable(result.data, result.total, result.total_pages);
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是後端回報錯誤：${result.message || '資料庫為空'}</td></tr>`;
         }
@@ -24,11 +33,13 @@ async function fetchChromaData() {
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 ChromaDB 撈取向量資料...</td></tr>`;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/chroma-jobs`);
+        const url = `${API_BASE_URL}/chroma-jobs?page=${currentChromaPage}&limit=${ITEMS_PER_PAGE}&min_salary=${filterSalary}&min_hr_pr=${filterHrPr}`;
+        const response = await fetch(url);
         const result = await response.json();
 
         if (result.status === 'success' && result.data.length > 0) {
-            renderChromaTable(result.data);
+            renderChromaTable(result.data, result.total_in_db);
+            updateChromaPagination(result.has_more);
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是 ChromaDB 尚未建立：${result.message || '無資料'}</td></tr>`;
         }
@@ -37,26 +48,32 @@ async function fetchChromaData() {
     }
 }
 
-function renderSQLiteTable(data) {
+function renderSQLiteTable(data,totalCount,totalPages) {
     const sqliteBody = document.getElementById('sqlite-table-body');
 
     // 更新總計數量標籤
     const titleRow = document.getElementById('sqlite-total-count');
     if (titleRow) titleRow.innerText = `總計: ${data.length} 筆`;
-    console.log(data.length);
+
     sqliteBody.innerHTML = data.map(row => `
         <tr class="hover:bg-indigo-50 transition-colors group">
             <td class="px-6 py-4 font-mono text-xs text-gray-500">${row.job_id}</td>
             <td class="px-6 py-4 font-medium text-gray-800">${row.custName}</td>
             <td class="px-6 py-4 text-gray-600 truncate max-w-xs">${row.jobName}</td>
-            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>已儲存</span></td> 
+            <td class="px-6 py-4 text-left">
+                <a href="${row.job_link}" target="_blank" class="text-primary hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                    查看職缺 <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs"></i>
+                </a>
+            </td>
             <td class="px-6 py-4 text-right">
                 <button onclick='openModal(${JSON.stringify(row.raw_json).replace(/'/g, "&#39;")}, "${row.job_id}")' class="text-primary hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-                    檢視 JSON
+                    檢視 doc
                 </button>
             </td>
         </tr>
     `).join('');
+
+    updateSqlitePagination(totalPages);
 }
 
 function renderChromaTable(data) {
@@ -99,6 +116,51 @@ function renderChromaTable(data) {
         `
     }).join('');
 }
+
+// ----------------- 分頁與篩選按鈕邏輯 -----------------
+function updateSqlitePagination(totalPages) {
+    document.getElementById('sqlite-page-info').innerText = `第 ${currentSqlitePage} 頁 / 共 ${totalPages} 頁`;
+    document.getElementById('btn-sqlite-prev').disabled = currentSqlitePage <= 1;
+    document.getElementById('btn-sqlite-next').disabled = currentSqlitePage >= totalPages;
+}
+function changeSqlitePage(direction) {
+    currentSqlitePage += direction;
+    fetchSQLiteData();
+}
+function updateChromaPagination(hasMore) {
+    document.getElementById('chroma-page-info').innerText = `第 ${currentChromaPage} 頁`;
+    document.getElementById('btn-chroma-prev').disabled = currentChromaPage <= 1;
+    // 如果這次抓到的數量比 limit 少，代表沒下一頁了
+    document.getElementById('btn-chroma-next').disabled = !hasMore;
+}
+function changeChromaPage(direction) {
+    currentChromaPage += direction;
+    fetchChromaData();
+}
+function applyChromaFilters() {
+    const salInput = document.getElementById('filter-salary').value;
+    const hrInput = document.getElementById('filter-hr-pr').value;
+    
+    filterSalary = salInput ? parseInt(salInput) : 0;
+    filterHrPr = hrInput ? parseFloat(hrInput) : 0;
+    
+    // 【一定要加這段】不然輸入 50，後端還是找不到 0.32 的資料
+    if (filterHrPr > 1) {
+        filterHrPr = filterHrPr / 100;
+    }
+    
+    currentChromaPage = 1; 
+    fetchChromaData();
+}
+function clearChromaFilters() {
+    document.getElementById('filter-salary').value = '';
+    document.getElementById('filter-hr-pr').value = '';
+    filterSalary = 0;
+    filterHrPr = 0;
+    currentChromaPage = 1;
+    fetchChromaData();
+}
+// -------------------------------------------------------------
 
 function switchTab(tabId) {
     // 1. 切換頁籤前，先清空搜尋框並恢復所有隱藏的表格資料
@@ -276,10 +338,4 @@ function handleChatSubmit(e) {
 window.onload = () => {
     fetchSQLiteData();
     fetchChromaData();
-
-    // 綁定 ChromaDB 頁籤的「重新載入」按鈕
-    const reloadBtn = document.querySelector('#tab-chroma button');
-    if (reloadBtn) {
-        reloadBtn.onclick = fetchChromaData;
-    }
 };

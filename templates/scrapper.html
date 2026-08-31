@@ -82,6 +82,21 @@
                         <i class="fa-solid fa-list-check mr-2 group-hover:scale-110 transition-transform"></i> 點擊設定職務
                     </button>
                 </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-start transition-shadow hover:shadow-md">
+                    <div class="flex items-center space-x-4 w-full">
+                        <div class="bg-amber-50 p-4 rounded-xl text-amber-500 shadow-sm border border-amber-100">
+                            <i class="fa-solid fa-keyboard text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-bold text-gray-800 text-lg">搜尋關鍵字</h2>
+                            <p class="text-sm mt-1 text-gray-400">輸入你想尋找的特定技能或公司</p>
+                        </div>
+                    </div>
+                    <div class="mt-auto w-full pt-6">
+                        <input type="text" id="keyword-input" placeholder="例如：Python、台積電..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all bg-gray-50 focus:bg-white shadow-inner">
+                    </div>
+                </div>
             </div>
 
             <!-- 執行按鈕 (修復了顏色的 Bug) -->
@@ -327,6 +342,8 @@
     document.getElementById('start-btn').addEventListener('click', async () => {
         const areaUl = document.querySelector('#area-container > ul');
         const jobcatUl = document.querySelector('#jobcat-container > ul');
+        const keywordInput = document.getElementById('keyword-input').value.trim();
+        console.log(keywordInput);
         
         if (!areaUl || !jobcatUl) {
             alert("⚠️ 選項資料尚未載入成功，請稍後再試！");
@@ -366,7 +383,7 @@
 
             ws.onopen = () => {
                 terminal.innerHTML += "<div class='text-emerald-400 font-bold'>[System] 連線已建立！發送參數至引擎...</div>";
-                ws.send(JSON.stringify({ areas: selectedAreas, jobcats: selectedJobcats }));
+                ws.send(JSON.stringify({ areas: selectedAreas, jobcats: selectedJobcats,keyword:keywordInput}));
             };
 
             ws.onmessage = (event) => {

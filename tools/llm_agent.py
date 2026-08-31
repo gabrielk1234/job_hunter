@@ -1,21 +1,27 @@
 from google import genai
 from google.genai import types
-import chromadb
 from typing import List, Dict
+
+import chromadb
+import sqlite3
 import json
+import traceback
 import textwrap
 
-# 初始化 ChromaDB 客戶端 (假設是在本地運作)
-# 請根據你實際的 ChromaDB 設定調整路徑或連線方式
+from tools.myown_tools import flatten
+
 chroma_client = chromadb.PersistentClient(path="/Users/gkko/Documents/job_analysis/my_job_db")
 try:
-    # 假設你的 collection 名稱為 "jobs"，請替換成實際名稱
-    collection = chroma_client.get_collection(name="jobs_collection")
+    collection = chroma_client.get_collection(name="job_chunks")
 except Exception as e:
     print(f"無法載入 ChromaDB Collection: {e}")
     collection = None
     
 active_chats: Dict[str, any] = {}
+
+## 獲取API Key
+with open('./apikey.json', 'r', encoding='utf-8') as f:
+    api_key = json.load(f).get('gemini_api_key', '')
 
 def search_jobs(query: str, filters: str = None, limit: int = 3) -> str:
     """
@@ -50,7 +56,9 @@ def search_jobs(query: str, filters: str = None, limit: int = 3) -> str:
             filters = None
 
     print(f"Gemini 正在使用工具搜尋：關鍵字='{query}', 條件={filters}")
-    # 【新增這段】檢查 Gemini 是不是又調皮傳了字串過來
+    sqlite_db = 'all_jobs.db'
+    conn = sqlite3.connect(sqlite_db)
+    cursor = conn.cursor()
     
     try:
         # 直接把 Gemini 組裝好的 filters 餵給 where
@@ -66,25 +74,50 @@ def search_jobs(query: str, filters: str = None, limit: int = 3) -> str:
 
         # 將結果整理成文字回傳給 Gemini
         formatted_results = []
+        job_id_set = set()
         for i in range(len(results['documents'][0])):
-            doc = textwrap.dedent(results['documents'][0][i])
-            meta = results['metadatas'][0][i]
+            doc = textwrap.dedent(results['documents'][0][i]) # 被切成chunk的資訊
+            metadata = results['metadatas'][0][i]
+            
+            
+            # ============== 找到chunk的原始片段
+            job_id = metadata['job_id']
+            
+            if job_id in job_id_set: # 重複的chunk就不用撈原始資料了
+                continue
+            
+            job_id_set.add(job_id)
+            # 使用參數化查詢（?），避免 SQL Injection
+            cursor.execute(
+                "SELECT job_document FROM job_documents WHERE job_id = ?",
+                (job_id,)
+            )
+
+            # 抓取單筆結果
+            row = cursor.fetchone()
+
+            if row:
+                job_document = flatten(row[0])  # 取出第一個欄位 (job_document)
+                print(job_document)
+            else:
+                print(f"找不到 ID 為 {job_id} 的職缺")
             
             job_info = f"""
             --- 職缺 {i+1} ---
-            {doc}
+            {job_document}
             """
             formatted_results.append(job_info)
+            
+        return "\n".join(formatted_results)
         
-        print("\n".join(formatted_results))
         
     except Exception as e:
         print(f"搜尋時發生錯誤: {str(e)}")
         return f"搜尋時發生錯誤: {str(e)}"
 
-def ask_gemini(user_message: str, api_key: str, user_id: str = "default_user") -> str:
+def ask_gemini(user_message: str, user_id: str = "default_user") -> str:
     """
-    負責與 Gemini 溝通的核心函數
+    負責與 Gemini 溝通的核心函數, 用於有來有回的聊天機器人
     """
     if not api_key:
         return "系統錯誤：後端尚未設定 Gemini API Key！"
@@ -108,23 +141,17 @@ def ask_gemini(user_message: str, api_key: str, user_id: str = "default_user") -
             
             # 建立具備 Tool 的對話 Session
             chat = client.chats.create(
-                # model='gemini-3.6-flash',
                 model='gemini-3.5-flash-lite',
                 config=types.GenerateContentConfig(
                     system_instruction=system_instruction,
-                    # 將我們定義好的 python function 直接註冊為工具
                     tools=[search_jobs], 
-                    temperature=0.3, # 稍微調低 temperature 讓回覆更穩定客觀
+                    temperature=0.3,
                 )
             )
-            # 將這個 Session 存起來
             active_chats[user_id] = {'client':client,
                                      'chat':chat}
         
-        chat = active_chats[user_id]['chat'] # 取出該使用者的對話 Session
-        # 3. 傳送使用者的訊息給模型
-        # 因為我們設定了 tools，如果模型覺得有需要，它會自動觸發 Function Calling
-        # 並且 genai SDK 的 chats.send_message 會自動幫我們處理「呼叫工具 -> 拿回結果 -> 再請模型整理」的迴圈
+        chat = active_chats[user_id]['chat']
         response = chat.send_message(user_message)
         
         return response.text
@@ -132,3 +159,21 @@ def ask_gemini(user_message: str, api_key: str, user_id: str = "default_user") -
     except Exception as e:
         print(f"Gemini API 呼叫失敗: {str(e)}")
         return f"不好意思，我的大腦(API)暫時連線失敗了，錯誤訊息：{str(e)}"
+
+def call_gemini(prompt:str,temperature:float =0.3,output_json=False):
+    genai_client = genai.Client(api_key=api_key)
+    if output_json:
+        mime_type = "application/json"
+    else:
+        mime_type = None
+    
+    try:
+        response = genai_client.models.generate_content(
+                model='gemini-3.5-flash-lite',
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type=mime_type, temperature=temperature)
+            )
+        return response
+    except Exception as e:
+        traceback.print_exc()
+        print(f"tools/llm_agent (call_gemini)發生錯誤：{str(e)}")

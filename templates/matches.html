@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}JobHunter - AI 職缺配對{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-8">
+    
+    <!-- 標題與重新匹配按鈕 -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">AI 精準職缺配對</h1>
+            <p class="text-gray-500 mt-2">基於您的履歷深度特徵，嚴選最適合您的機會。</p>
+        </div>
+        
+        <button onclick="triggerMatch()" id="btn-rematch" class="px-6 py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center w-full md:w-auto">
+            <i class="fa-solid fa-rotate mr-2"></i>
+            重新啟動 AI 匹配
+        </button>
+    </div>
+
+    <!-- 背景進度條 (預設隱藏) -->
+    <div id="progress-container" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="flex justify-between items-end mb-2">
+            <div>
+                <h3 class="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-1">AI 匹配執行中</h3>
+                <p id="progress-log" class="text-gray-600 text-sm font-medium">正在準備資料...</p>
+            </div>
+            <span id="progress-text" class="text-2xl font-black text-gray-800">0%</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- 匹配結果區 -->
+    <div id="empty-state" class="hidden text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+        <i class="fa-solid fa-ghost text-5xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-500">目前尚無配對資料</h3>
+        <p class="text-gray-400 mt-2">請點擊上方按鈕開始進行 AI 匹配</p>
+    </div>
+
+    <div id="matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 hidden">
+        <!-- JS 動態產生卡片 -->
+    </div>
+</div>
+
+<!-- 推薦信彈出視窗 -->
+
+<div id="letter-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm px-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all">
+        <!-- Header -->
+        <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white flex items-center">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI 專屬推薦信
+            </h3>
+            <button onclick="closeModal()" class="text-indigo-200 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Body -->
+        <div class="p-6">
+            <p class="text-sm text-gray-500 mb-4">這封信已根據您的履歷與職缺要求進行客製化，您可以直接在下方修改，確認無誤後點擊複製。</p>
+            <textarea id="letter-content" rows="10" class="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700 text-sm leading-relaxed resize-none"></textarea>
+        </div>
+        
+        <!-- Footer -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-3">
+            <button onclick="closeModal()" class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-colors">
+                取消
+            </button>
+            <button onclick="copyLetter()" id="btn-copy" class="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-colors flex items-center">
+                <i class="fa-regular fa-copy mr-2"></i>一鍵複製
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const USER_ID = 'default_user'; // 測試用
+    let pollingInterval = null;
+
+    // 頁面載入時：檢查是否有任務在背景跑，或是有舊資料
+    window.onload = async function() {
+        checkStatus(); 
+    }
+
+    // 觸發重新配對
+    async function triggerMatch() {
+        if(!confirm("確定要重新匹配嗎？這將會清除您目前的配對紀錄。")) return;
+        
+        document.getElementById('btn-rematch').disabled = true;
+        document.getElementById('matches-grid').classList.add('hidden');
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('progress-container').classList.remove('hidden');
+        
+        const formData = new FormData();
+        formData.append('user_id', USER_ID);
+
+        try {
+            await fetch('/api/trigger-match', { method: 'POST', body: formData });
+            // 觸發成功後，開始輪詢進度
+            startPolling();
+        } catch (error) {
+            alert('觸發失敗');
+            document.getElementById('btn-rematch').disabled = false;
+        }
+    }
+
+    // 開始輪詢
+    function startPolling() {
+        if(pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(checkStatus, 2000); // 每 2 秒問一次後端
+    }
+
+    // 檢查背景任務狀態
+    async function checkStatus() {
+        try {
+            const res = await fetch(`/api/match-status?user_id=${USER_ID}`);
+            const result = await res.json();
+            
+            if (result.status === 'success') {
+                const data = result.data;
+                
+                // 如果任務正在跑
+                if (data.status === 'running') {
+                    document.getElementById('progress-container').classList.remove('hidden');
+                    document.getElementById('progress-bar').style.width = `${data.progress}%`;
+                    document.getElementById('progress-text').textContent = `${data.progress}%`;
+                    document.getElementById('progress-log').textContent = data.log;
+                    document.getElementById('btn-rematch').disabled = true;
+                    
+                    // 確保輪詢有開
+                    if(!pollingInterval) startPolling();
+                } 
+                // 如果任務剛跑完
+                else if (data.status === 'done') {
+                    if(pollingInterval) clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    
+                    document.getElementById('progress-container').classList.add('hidden');
+                    document.getElementById('btn-rematch').disabled = false;
+                    
+                    // 拉取最新資料
+                    fetchMatches();
+                } 
+                // 如果是閒置狀態 (一進來沒任務跑)
+                else {
+                    if(pollingInterval) clearInterval(pollingInterval);
+                    fetchMatches();
+                }
+            }
+        } catch (e) {
+            console.error("狀態檢查失敗", e);
+        }
+    }
+
+    // 取得算好的配對資料
+    async function fetchMatches() {
+        try {
+            const res = await fetch(`/api/get-matches?user_id=${USER_ID}`);
+            const result = await res.json();
+            
+            if (result.status === 'success' && result.data.length > 0) {
+                renderCards(result.data);
+            } else {
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('matches-grid').classList.add('hidden');
+            }
+        } catch (e) {
+            console.error("拉取配對資料失敗", e);
+        }
+    }
+
+    // 渲染精緻的職缺卡片
+    function renderCards(matches) {
+        const grid = document.getElementById('matches-grid');
+        grid.innerHTML = '';
+        matches.forEach(m => {
+            // 分數顏色邏輯
+            let scoreColor = 'text-green-500';
+            if (m.match_score < 70) scoreColor = 'text-amber-500';
+            if (m.match_score < 50) scoreColor = 'text-red-500';
+
+            // 組裝優點 (綠色勾勾)
+            let reasonsHtml = '';
+            m.match_reasons.forEach(r => {
+                reasonsHtml += `<li class="flex items-start"><i class="fa-solid fa-circle-check text-emerald-500 mt-1 mr-2"></i><span class="text-sm text-gray-700">${r}</span></li>`;
+            });
+
+            // 組裝缺點 (紅色警告)
+            let risksHtml = '';
+            m.risk_reasons.forEach(r => {
+                risksHtml += `<li class="flex items-start"><i class="fa-solid fa-triangle-exclamation text-rose-500 mt-1 mr-2"></i><span class="text-sm text-gray-700">${r}</span></li>`;
+            });
+
+            const card = `
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full">
+                <!-- 頭部：分數與標題 -->
+                <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">${m.job_name}</h2>
+                        <p class="text-sm font-medium text-indigo-600 mt-1">${m.cust_name}</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-gray-50 rounded-2xl p-3 border border-gray-100 min-w-[70px]">
+                        <span class="text-xs text-gray-400 font-bold mb-1">匹配度</span>
+                        <span class="text-2xl font-black ${scoreColor}">${m.match_score}%</span>
+                    </div>
+                </div>
+
+                <!-- 內容：AI 評點 -->
+                <div class="flex-1 space-y-4">
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">匹配亮點</h3>
+                        <ul class="space-y-2">${reasonsHtml || '<li class="text-sm text-gray-400">無特別亮點</li>'}</ul>
+                    </div>
+                    
+                    ${risksHtml ? `
+                    <div class="bg-rose-50 rounded-xl p-3 border border-rose-100">
+                        <h3 class="text-xs font-bold text-rose-500 uppercase tracking-wider mb-2">潛在挑戰</h3>
+                        <ul class="space-y-1">${risksHtml}</ul>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- 底部按鈕 -->
+                <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
+                    <button onclick="generateLetter('${m.job_id}', this)" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 rounded-xl transition-all text-sm group/btn">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1 group-hover/btn:rotate-12 transition-transform"></i> 寫推薦信
+                    </button>
+                    <a href="${m.job_link}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-2.5 rounded-xl transition-colors text-sm flex justify-center items-center">
+                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> 完整資訊
+                    </a>
+                </div>
+            </div>
+            `;
+            grid.innerHTML += card;
+        });
+
+        grid.classList.remove('hidden');
+        document.getElementById('empty-state').classList.add('hidden');
+    }
+
+    // 呼叫 API 產信
+    async function generateLetter(jobId, btnElement) {
+        // 改變按鈕狀態為 loading
+        const originalHtml = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> 撰寫中...';
+        btnElement.disabled = true;
+        btnElement.classList.add('opacity-70');
+
+        const formData = new FormData();
+        formData.append('user_id', USER_ID);
+        formData.append('job_id', jobId);
+
+        try {
+            const res = await fetch('/api/generate-cover-letter', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+            
+            if (result.status === 'success') {
+                // 將信件內容塞入文字框
+                document.getElementById('letter-content').value = result.data;
+                // 打開 Modal
+                document.getElementById('letter-modal').classList.remove('hidden');
+                // 復原複製按鈕狀態
+                const copyBtn = document.getElementById('btn-copy');
+                copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-2"></i>一鍵複製';
+                copyBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                copyBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            } else {
+                alert('產信失敗：' + result.message);
+            }
+        } catch (e) {
+            alert('伺服器連線錯誤');
+            console.error(e);
+        } finally {
+            // 復原原本的按鈕狀態
+            btnElement.innerHTML = originalHtml;
+            btnElement.disabled = false;
+            btnElement.classList.remove('opacity-70');
+        }
+    }
+
+    // 關閉 Modal
+    function closeModal() {
+        document.getElementById('letter-modal').classList.add('hidden');
+    }
+
+    // 複製到剪貼簿 (使用相容性最高的寫法)
+    function copyLetter() {
+        const textarea = document.getElementById('letter-content');
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // 給手機瀏覽器看的
+        
+        try {
+            document.execCommand('copy');
+            
+            // 改變按鈕 UI 給予回饋
+            const copyBtn = document.getElementById('btn-copy');
+            copyBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>已複製';
+            copyBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            copyBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+            
+            // 兩秒後關閉 Modal
+            setTimeout(() => {
+                closeModal();
+            }, 2000);
+            
+        } catch (err) {
+            alert('複製失敗，請手動全選複製。');
+        }
+    }
+</script>
+{% endblock %}

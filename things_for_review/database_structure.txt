@@ -43,3 +43,55 @@ industry (str)
 interactionRecord -> lastProcessedResumeAtTime
 interactionRecord -> lastCustReplyTimestamp
 interactionRecord -> nowTimestamp
+
+MyDatabasestructure:
+# sqlite3
+## all_jobs.db
+### job_documents 儲存爬到的職缺
+- job_id TEXT PRIMARY KEY
+- job_document TEXT,
+- job_name TEXT,
+- cust_name TEXT
+- job_link TEXT
+
+### user_profiles 儲存使用者的履歷資料
+- user_id TEXT PRIMARY KEY,
+- raw_text TEXT,
+- parsed_json TEXT
+
+### user_matches
+- user_id TEXT,
+- job_id TEXT,
+- match_score INTEGER,
+- match_reasons TEXT,
+- risk_reasons TEXT,
+- created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+- PRIMARY KEY (user_id, job_id)
+
+# ChromaDB
+## my_job_db
+### job_chunks
+- id
+- document: 被切割好的chunk，包括(公司資訊、職務細節、公司福利、徵才條件、HR單位 聯絡資訊)
+- metadata:{
+        "hrBehaviorPR": 0.32658141672245355,
+        "remoteWork": "無",
+        "chunk_type": "公司資訊",
+        "needEmp": "1~2人",
+        "salaryType": "待遇面議(40000以上)",
+        "analysisUrl": "https://www.104.com.tw/jobs/apply/analysis/6gd8y",
+        "custUrl": "https://www.104.com.tw/company/233rv1s",
+        "salaryMax": 0,
+        "custName": "鴻海精密工業股份有限公司",
+        "salaryMin": 0,
+        "hrName": "吳主管",
+        "hrEmail": "rex.wu@dct-cloud.com",
+        "lastCustReplyTimestamp": 0,
+        "lastProcessedResumeAtTime": 1786946191,
+        "jobName": "高雄軟體園區-機房維運輪班工程師",
+        "address": "高雄市前鎮區成功二路25號 ",
+        "jobType": "全職",
+        "industry": "消費性電子產品製造業",
+        "appearDate": "2026/08/20",
+        "job_id": "10841362"
+    }
