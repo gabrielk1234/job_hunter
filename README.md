@@ -2,6 +2,7 @@
 
 > 個人化的 AI 求職助手 — 從 104 人力銀行自動爬取職缺，結合向量搜尋與 Gemini，幫你找機會、配對履歷、生成推薦信。
 
+<video src="https://raw.githubusercontent.com/gabrielk1234/job_hunter/main/demo.mp4" controls width="100%"></video>
 ---
 
 ## 專案簡介
