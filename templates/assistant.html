@@ -3,6 +3,43 @@
 {% block title %}AI 職涯顧問 - JobHunter{% endblock %}
 
 {% block content %}
+<!-- 引入 marked.js 來解析 Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- 補上一些給 Markdown 用的基本樣式，避免被 Tailwind 預設洗掉 -->
+<style>
+    .markdown-content p {
+        margin-bottom: 0.75em;
+    }
+    .markdown-content p:last-child {
+        margin-bottom: 0;
+    }
+    /* 處理粗體 */
+    .markdown-content strong, .markdown-content b {
+        font-weight: 700;
+        color: #1f2937; /* Tailwind gray-800 */
+    }
+    /* 處理清單 (ul, li) */
+    .markdown-content ul {
+        list-style-type: disc;
+        padding-left: 1.5em;
+        margin-bottom: 0.75em;
+    }
+    .markdown-content ol {
+        list-style-type: decimal;
+        padding-left: 1.5em;
+        margin-bottom: 0.75em;
+    }
+    .markdown-content li {
+        margin-bottom: 0.25em;
+    }
+    /* 處理分隔線 */
+    .markdown-content hr {
+        border-color: #e5e7eb;
+        margin: 1em 0;
+    }
+</style>
+
 <div class="p-8 h-screen flex flex-col">
     
     <!-- 頁面標題區 -->
@@ -26,7 +63,7 @@
                 </div>
                 <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[75%]">
                     <p class="text-gray-700 leading-relaxed">哈囉！我是你的專屬職涯顧問 👋<br>
-                    你可以問我目前抓了哪些職缺，或是點左下角的迴紋針 📎 上傳你的 PDF 履歷，我們來看看哪間公司最適合你！</p>
+                    你可以問我目前抓了哪些職缺，我們來看看哪間公司最適合你！</p>
                 </div>
             </div>
             
@@ -36,14 +73,6 @@
 
         <!-- 底部輸入區 -->
         <div class="p-4 bg-white border-t border-gray-200 flex items-end gap-3">
-            
-            <!-- 隱藏的檔案上傳區塊 (限制只能傳 PDF) -->
-            <input type="file" id="resume-upload" accept="application/pdf" class="hidden">
-            
-            <!-- 點擊觸發上傳的按鈕 -->
-            <button onclick="document.getElementById('resume-upload').click()" class="text-gray-400 hover:text-indigo-500 transition-colors p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-indigo-50 flex-shrink-0" title="上傳履歷">
-                <i class="fa-solid fa-paperclip text-lg"></i>
-            </button>
 
             <!-- 輸入框 -->
             <div class="flex-1 relative">
@@ -63,13 +92,23 @@
     const sendBtn = document.getElementById('send-btn');
     const chatBox = document.getElementById('chat-box');
 
+    // 設定 marked.js，讓吐出來的超連結可以自帶顏色，而且點擊時會「開新分頁 (target="_blank")」
+    marked.use({
+        renderer: {
+            link(linkObj) {
+                // linkObj 會包含 href, title, text 等屬性
+                return `<a target="_blank" rel="noopener noreferrer" href="${linkObj.href}" class="text-indigo-600 hover:text-indigo-800 underline font-medium">${linkObj.text}</a>`;
+            }
+        }
+    });
+
     function appendMessage(sender, text) {
         const msgDiv = document.createElement('div');
         msgDiv.className = sender === 'user' ? 'flex items-start justify-end' : 'flex items-start';
         
         let innerHTML = '';
         if (sender === 'user') {
-            // 使用者的對話泡泡 (右側，藍底白字)
+            // 使用者的對話泡泡 (不用轉 Markdown，維持純文字)
             innerHTML = `
                 <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm max-w-[75%]">
                     <p class="leading-relaxed whitespace-pre-wrap">${text}</p>
@@ -79,13 +118,16 @@
                 </div>
             `;
         } else {
-            // AI 的對話泡泡 (左側，白底黑字)
+            // AI 的對話泡泡 (這裡使用 marked.parse 把 text 轉成漂亮 HTML)
+            const parsedHTML = marked.parse(text);
+            
             innerHTML = `
                 <div class="bg-indigo-100 rounded-full w-10 h-10 flex items-center justify-center mr-3 shadow-sm flex-shrink-0">
                     <i class="fa-solid fa-robot text-indigo-600"></i>
                 </div>
-                <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[75%] w-full markdown-body">
-                    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">${text}</p>
+                <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[75%] w-full">
+                    <!-- 改用我們自己寫的 markdown-content class 來套用樣式 -->
+                    <div class="text-gray-700 leading-relaxed markdown-content">${parsedHTML}</div>
                 </div>
             `;
         }
