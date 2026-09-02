@@ -67,9 +67,12 @@ function renderSQLiteTable(data,totalCount,totalPages) {
                     查看職缺 <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs"></i>
                 </a>
             </td>
-            <td class="px-6 py-4 text-right">
-                <button onclick='openModal(${JSON.stringify(row.raw_json).replace(/'/g, "&#39;")}, "${row.job_id}")' class="text-primary hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-                    檢視 doc
+            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
+                <a href="/analysis?job_id=${row.job_id}" class="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI 解析
+                </a>
+                <button onclick='openModal(${JSON.stringify(row.raw_json).replace(/'/g, "&#39;")}, "${row.job_id}")' class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                    JSON
                 </button>
             </td>
         </tr>
@@ -107,9 +110,12 @@ function renderChromaTable(data) {
             </td>
             <td class="px-6 py-4 text-gray-600 font-semibold">${salary}</td>
             <td class="px-6 py-4 text-gray-600 font-semibold">${hrBehaviorPR.toFixed(2)}</td>
-            <td class="px-6 py-4 text-right">
-                <button onclick='openModal(${JSON.stringify(row).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-secondary hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-                    查看 Metadata
+            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
+                <a href="/analysis?job_id=${meta.job_id || row.id}" class="text-white bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI 解析
+                </a>
+                <button onclick='openModal(${JSON.stringify(row).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                    Meta
                 </button>
             </td>
         </tr>

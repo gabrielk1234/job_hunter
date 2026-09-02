@@ -68,6 +68,21 @@ MyDatabasestructure:
 - created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 - PRIMARY KEY (user_id, job_id)
 
+### job_deep_analysis
+- user_id TEXT 綁定使用者 (Primary Key 之一)
+- job_id TEXT 綁定職缺 (Primary Key 之一)
+- match_tech_score INTEGER 硬技術吻合度 (0-100)
+- match_exp_score INTEGER 經歷年資吻合度 (0-100)
+- perfect_matches TEXT 完美命中清單 (存 JSON Array)
+- fatal_gaps TEXT 致命技能缺口 (存 JSON Array)
+- hidden_strengths TEXT 隱藏實力提醒 (存 JSON Array)
+- hr_red_flags TEXT 潛在被刷掉的風險 (存 JSON Array)
+- resume_tweaks	TEXT 履歷微調建議 (存 JSON Array)
+- interview_prep TEXT 面試模擬題與挖洞預警 (存 JSON Array)
+- cover_letter TEXT 推薦信內容 (預設 NULL，按了生成才更新)
+- is_latest_resume INTEGER 是否基於最新履歷 (1=True, 0=False)
+- updated_at DATETIME 最後分析的時間
+
 # ChromaDB
 ## my_job_db
 ### job_chunks

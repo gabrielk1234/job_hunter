@@ -66,6 +66,24 @@ def init_db():
             PRIMARY KEY (user_id, job_id)
         )
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS job_deep_analysis (
+            user_id TEXT,
+            job_id TEXT,
+            match_tech_score INTEGER,
+            match_exp_score INTEGER,
+            perfect_matches TEXT,
+            fatal_gaps TEXT,
+            hidden_strengths TEXT,
+            hr_red_flags TEXT,
+            resume_tweaks TEXT,
+            interview_prep TEXT,
+            cover_letter TEXT,
+            is_latest_resume INTEGER DEFAULT 1,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id, job_id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -434,6 +452,10 @@ async def parse_profile(
             INSERT OR REPLACE INTO user_profiles (user_id, raw_text, parsed_json)
             VALUES (?, ?, ?)
         ''', (user_id, resume_text, json.dumps(parsed_data, ensure_ascii=False)))
+        
+        # 將job_deep_analysis中的is_latest_resume設爲false
+        cursor.execute("UPDATE job_deep_analysis SET is_latest_resume = 0 WHERE user_id = ?", (user_id,))
+        
         conn.commit()
         conn.close()
         
@@ -443,7 +465,9 @@ async def parse_profile(
         error_trace = traceback.format_exc()
         print(error_trace)
         return {"status": "error", "message": str(e)}
-    
+
+
+
 matching_status = {}
 def run_match_task(user_id: str):
     """在背景執行的 AI 配對引擎"""
@@ -556,9 +580,213 @@ def trigger_match(background_tasks: BackgroundTasks, user_id: str = Form(...)):
     background_tasks.add_task(run_match_task, user_id)
     return {"status": "success", "message": "已開始背景配對"}
 
+@app.get("/api/get-deep-analysis")
+def get_deep_analysis(user_id: str, job_id: str):
+    """取得職缺深度分析結果與職缺 Metadata"""
+    try:
+        # 1. 從 ChromaDB 撈取職缺 Metadata
+        metadata = {}
+        try:
+            client = chromadb.PersistentClient(path="./my_job_db")
+            collection = client.get_collection(name="job_chunks")
+            results = collection.get(where={"job_id": job_id}, limit=1)
+            if results and results.get('metadatas') and len(results['metadatas']) > 0:
+                metadata = results['metadatas'][0]
+        except Exception as e:
+            print(f"ChromaDB 獲取 Metadata 失敗: {e}")
+
+        # 若 ChromaDB 沒抓到，嘗試從 SQLite 補齊基礎資料
+        conn = sqlite3.connect('all_jobs.db')
+        cursor = conn.cursor()
+        
+        if not metadata or not metadata.get("jobName"):
+            cursor.execute("SELECT job_name, cust_name, job_link FROM job_documents WHERE job_id = ?", (job_id,))
+            doc_row = cursor.fetchone()
+            if doc_row:
+                metadata = {
+                    "job_id": job_id,
+                    "jobName": doc_row[0],
+                    "custName": doc_row[1],
+                    "analysisUrl": doc_row[2] or "",
+                    "custUrl": "#",
+                    "salaryType": "未填寫",
+                    "address": "未提供",
+                    "remoteWork": "無",
+                    "hrBehaviorPR": 0.0,
+                    "lastProcessedResumeAtTime": 0
+                }
+        print(f"【DEBUG】get_deep_analysis -> metadata: {metadata}")
+        # 2. 從 SQLite 撈取使用者的分析紀錄
+        cursor.execute('''
+            SELECT match_tech_score, match_exp_score, perfect_matches, fatal_gaps, 
+                   hidden_strengths, hr_red_flags, resume_tweaks, interview_prep, 
+                   cover_letter, is_latest_resume, updated_at
+            FROM job_deep_analysis
+            WHERE user_id = ? AND job_id = ?
+        ''', (user_id, job_id))
+        row = cursor.fetchone()
+
+        if row:
+            analysis = {
+                "match_tech_score": row[0] or 0,
+                "match_exp_score": row[1] or 0,
+                "perfect_matches": json.loads(row[2]) if row[2] else [],
+                "fatal_gaps": json.loads(row[3]) if row[3] else [],
+                "hidden_strengths": json.loads(row[4]) if row[4] else [],
+                "hr_red_flags": json.loads(row[5]) if row[5] else [],
+                "resume_tweaks": json.loads(row[6]) if row[6] else [],
+                "interview_prep": json.loads(row[7]) if row[7] else [],
+                "cover_letter": row[8],
+                "is_latest_resume": row[9] if row[9] is not None else 1,
+                "updated_at": row[10]
+            }
+            print(f"【DEBUG】get_deep_analysis -> row: {row}")
+            print(f"【DEBUG】get_deep_analysis -> analysis: {analysis}")
+            return {
+                "status": "success",
+                "metadata": metadata,
+                "analysis": analysis
+            }
+        else:
+            return {
+                "status": "not_analyzed",
+                "metadata": metadata
+            }
+    except Exception as e:
+        traceback.print_exc()
+        return {"status": "error", "message": f"獲取深度分析失敗: {str(e)}"}
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
+@app.post("/api/run-deep-analysis")
+def run_deep_analysis(user_id: str = Form(...), job_id: str = Form(...)):
+    """執行職缺深度健檢與多維度匹配"""
+    try:
+        conn = sqlite3.connect('all_jobs.db')
+        cursor = conn.cursor()
+
+        # 1. 撈取履歷特徵
+        cursor.execute("SELECT parsed_json FROM user_profiles WHERE user_id = ?", (user_id,))
+        user_row = cursor.fetchone()
+        if not user_row:
+            return {"status": "error", "message": "找不到履歷資料，請先至 Profile 頁面上傳履歷！"}
+        user_profile_json = user_row[0]
+
+        # 2. 撈取職缺全文
+        cursor.execute("SELECT job_document FROM job_documents WHERE job_id = ?", (job_id,))
+        job_row = cursor.fetchone()
+        if not job_row:
+            return {"status": "error", "message": "找不到該職缺的完整資料！"}
+        job_document = job_row[0]
+
+        # 3. 呼叫 Gemini 進行深度解析
+        prompt = f"""
+        你是一位資深科技業獵頭與技術主管。請根據以下候選人的【履歷特徵】與【目標職缺說明】，進行極度精準、客觀且深度的職缺匹配與履歷健檢。
+        
+        請嚴格按照指定的 JSON 格式回傳，絕對不要輸出任何 JSON 以外的文字：
+        {{
+            "match_tech_score": 75, // 0-100 的整數，硬技術吻合度評分
+            "match_exp_score": 85,  // 0-100 的整數，經歷/年資/產業吻合度評分
+            "perfect_matches": [
+                "候選人完全命中或超出要求的技能/條件1",
+                "條件2"
+            ],
+            "hidden_strengths": [
+                "候選人具備但履歷未充分突顯的隱藏實力或加分亮點1",
+                "亮點2"
+            ],
+            "fatal_gaps": [
+                "職缺硬性要求但候選人明顯欠缺的致命技能缺口1",
+                "缺口2"
+            ],
+            "hr_red_flags": [
+                "HR 或面試官審視履歷時可能產生的質疑、顧慮或扣分點1",
+                "顧慮2"
+            ],
+            "resume_tweaks": [
+                "針對此職缺的具體履歷修改與排版微調建議1",
+                "建議2"
+            ]
+        }}
+
+        【候選人履歷特徵】：
+        {user_profile_json}
+
+        【職缺說明】：
+        {job_document}
+        """
+
+        response = call_gemini(prompt=prompt, temperature=0.2, output_json=True)
+        raw_text = response.text.strip()
+        if raw_text.startswith('```json'): raw_text = raw_text[7:]
+        elif raw_text.startswith('```'): raw_text = raw_text[3:]
+        if raw_text.endswith('```'): raw_text = raw_text[:-3]
+
+        analysis_data = json.loads(raw_text.strip())
+
+        # 4. 存入或更新 job_deep_analysis 資料表
+        cursor.execute("""
+            INSERT INTO job_deep_analysis (
+                user_id, job_id, match_tech_score, match_exp_score,
+                perfect_matches, fatal_gaps, hidden_strengths, hr_red_flags,
+                resume_tweaks, is_latest_resume, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)
+            ON CONFLICT(user_id, job_id) DO UPDATE SET
+                match_tech_score = excluded.match_tech_score,
+                match_exp_score = excluded.match_exp_score,
+                perfect_matches = excluded.perfect_matches,
+                fatal_gaps = excluded.fatal_gaps,
+                hidden_strengths = excluded.hidden_strengths,
+                hr_red_flags = excluded.hr_red_flags,
+                resume_tweaks = excluded.resume_tweaks,
+                is_latest_resume = 1,
+                updated_at = CURRENT_TIMESTAMP
+        """, (
+            user_id, job_id,
+            int(analysis_data.get('match_tech_score', 0)),
+            int(analysis_data.get('match_exp_score', 0)),
+            json.dumps(analysis_data.get('perfect_matches', []), ensure_ascii=False),
+            json.dumps(analysis_data.get('fatal_gaps', []), ensure_ascii=False),
+            json.dumps(analysis_data.get('hidden_strengths', []), ensure_ascii=False),
+            json.dumps(analysis_data.get('hr_red_flags', []), ensure_ascii=False),
+            json.dumps(analysis_data.get('resume_tweaks', []), ensure_ascii=False)
+        ))
+        conn.commit()
+
+        # 撈出更新後的完整資料（包含可能既有的 interview_prep 與 cover_letter）
+        cursor.execute('''
+            SELECT interview_prep, cover_letter, updated_at
+            FROM job_deep_analysis
+            WHERE user_id = ? AND job_id = ?
+        ''', (user_id, job_id))
+        extra_row = cursor.fetchone()
+
+        result_payload = {
+            "match_tech_score": int(analysis_data.get('match_tech_score', 0)),
+            "match_exp_score": int(analysis_data.get('match_exp_score', 0)),
+            "perfect_matches": analysis_data.get('perfect_matches', []),
+            "fatal_gaps": analysis_data.get('fatal_gaps', []),
+            "hidden_strengths": analysis_data.get('hidden_strengths', []),
+            "hr_red_flags": analysis_data.get('hr_red_flags', []),
+            "resume_tweaks": analysis_data.get('resume_tweaks', []),
+            "interview_prep": json.loads(extra_row[0]) if extra_row and extra_row[0] else [],
+            "cover_letter": extra_row[1] if extra_row else None,
+            "is_latest_resume": 1,
+            "updated_at": extra_row[2] if extra_row else None
+        }
+
+        return {"status": "success", "data": result_payload}
+    except Exception as e:
+        traceback.print_exc()
+        return {"status": "error", "message": f"深度分析失敗: {str(e)}"}
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
 @app.post("/api/generate-cover-letter")
 def generate_cover_letter(user_id: str = Form(...), job_id: str = Form(...)):
-    """一鍵生成自我推薦信"""
+    """一鍵生成自我推薦信並存入資料庫"""
     try:
         conn = sqlite3.connect('all_jobs.db')
         cursor = conn.cursor()
@@ -598,10 +826,25 @@ def generate_cover_letter(user_id: str = Form(...), job_id: str = Form(...)):
         {job_document}
         """
         
-        response = call_gemini(prompt = prompt,temperature=0.4,output_json=True)
-        parsed_json = json.loads(response.text)
+        response = call_gemini(prompt=prompt, temperature=0.4, output_json=True)
+        raw_text = response.text.strip()
+        if raw_text.startswith('```json'): raw_text = raw_text[7:]
+        elif raw_text.startswith('```'): raw_text = raw_text[3:]
+        if raw_text.endswith('```'): raw_text = raw_text[:-3]
+
+        parsed_json = json.loads(raw_text.strip())
         letter_text = parsed_json.get("cover_letter", "生成推薦信失敗，請重試。")
         
+        # 同步更新至 job_deep_analysis 資料表
+        cursor.execute("""
+            INSERT INTO job_deep_analysis (user_id, job_id, cover_letter, updated_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(user_id, job_id) DO UPDATE SET
+                cover_letter = excluded.cover_letter,
+                updated_at = CURRENT_TIMESTAMP
+        """, (user_id, job_id, letter_text))
+        conn.commit()
+
         return {"status": "success", "data": letter_text}
         
     except Exception as e:
@@ -609,6 +852,86 @@ def generate_cover_letter(user_id: str = Form(...), job_id: str = Form(...)):
         return {"status": "error", "message": str(e)}
     finally:
         if 'conn' in locals(): conn.close()
+
+@app.post("/api/generate-interview-questions")
+def generate_interview_questions(user_id: str = Form(...), job_id: str = Form(...)):
+    """針對致命缺口與 HR 潛在顧慮生成模擬面試題"""
+    try:
+        conn = sqlite3.connect('all_jobs.db')
+        cursor = conn.cursor()
+
+        # 撈取該次分析的致命缺口與 HR 顧慮
+        cursor.execute("""
+            SELECT fatal_gaps, hr_red_flags 
+            FROM job_deep_analysis 
+            WHERE user_id = ? AND job_id = ?
+        """, (user_id, job_id))
+        analysis_row = cursor.fetchone()
+
+        fatal_gaps = "無特定技能缺口"
+        hr_red_flags = "無特定風險顧慮"
+        if analysis_row:
+            if analysis_row[0]: fatal_gaps = analysis_row[0]
+            if analysis_row[1]: hr_red_flags = analysis_row[1]
+
+        # 撈取職缺原文以提供更真實的情境
+        cursor.execute("SELECT job_document FROM job_documents WHERE job_id = ?", (job_id,))
+        job_row = cursor.fetchone()
+        job_document = job_row[0] if job_row else ""
+
+        prompt = f"""
+        你是一位具備多年經驗的資深技術主管與嚴格面試官。
+        請針對以下候選人面對此職缺時所暴露的「致命技能缺口 (fatal gaps)」與「HR 潛在挑剔點 (red flags)」，
+        模擬面試情境，產出 2 題最具殺傷力與代表性的關鍵面試題目，並為求職者提供具體、高 EQ 且具說服力的「反殺策略 (回答建議)」。
+
+        【缺口與風險點】：
+        - 致命技能缺口：{fatal_gaps}
+        - HR 潛在挑剔點：{hr_red_flags}
+
+        【職缺說明】：
+        {job_document}
+
+        【輸出格式】：
+        請嚴格按照以下 JSON Array 格式回傳 2 題面試題，絕對不要輸出任何 JSON 以外的文字：
+        [
+            {{
+                "type": "分類標籤 (例如：情境挑戰、履歷挖洞預警、技術深挖、壓力測試)",
+                "question": "面試官會問的具體問題",
+                "advice": "求職者的反殺策略與回答思路建議"
+            }},
+            {{
+                "type": "分類標籤 (例如：情境挑戰、履歷挖洞預警、技術深挖、壓力測試)",
+                "question": "面試官會問的具體問題",
+                "advice": "求職者的反殺策略與回答思路建議"
+            }}
+        ]
+        """
+
+        response = call_gemini(prompt=prompt, temperature=0.3, output_json=True)
+        raw_text = response.text.strip()
+        if raw_text.startswith('```json'): raw_text = raw_text[7:]
+        elif raw_text.startswith('```'): raw_text = raw_text[3:]
+        if raw_text.endswith('```'): raw_text = raw_text[:-3]
+
+        interview_questions = json.loads(raw_text.strip())
+
+        # 更新至 job_deep_analysis 資料庫
+        cursor.execute("""
+            INSERT INTO job_deep_analysis (user_id, job_id, interview_prep, updated_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(user_id, job_id) DO UPDATE SET
+                interview_prep = excluded.interview_prep,
+                updated_at = CURRENT_TIMESTAMP
+        """, (user_id, job_id, json.dumps(interview_questions, ensure_ascii=False)))
+        conn.commit()
+
+        return {"status": "success", "data": interview_questions}
+    except Exception as e:
+        traceback.print_exc()
+        return {"status": "error", "message": f"生成面試題失敗: {str(e)}"}
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @app.get("/api/match-status")
 def get_match_status(user_id: str):
@@ -647,6 +970,15 @@ def get_matches(user_id: str):
         return {"status": "error", "message": str(e)}
     finally:
         if 'conn' in locals(): conn.close()
+
+@app.get("/analysis")
+def get_analysis_page(request: Request):
+    # 這裡 context 設為 dashboard，這樣切過去時側邊欄的 dashboard 還是會發亮！
+    return templates.TemplateResponse(
+        request=request, 
+        name="analysis.html", 
+        context={"active_page": "dashboard"} 
+    )
 
 @app.get("/")
 def get_home(request: Request):
