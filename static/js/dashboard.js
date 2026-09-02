@@ -4,7 +4,9 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 // 設定目前頁碼跟一頁要抓幾筆
 let currentSqlitePage = 1;
 let currentChromaPage = 1;
-const ITEMS_PER_PAGE = 20; // 改成一頁 20 筆畫面比較好看，不會太長
+let globalKeyword = ''; // 新增全域搜尋變數
+let searchTimeout;      // 用來處理打字防抖 (Debounce)
+const ITEMS_PER_PAGE = 20; // 改成一頁 20 筆畫面比較好看
 
 // ChromaDB 篩選條件變數
 let filterSalary = 0;
@@ -15,7 +17,7 @@ async function fetchSQLiteData() {
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 SQLite 撈取資料...</td></tr>`;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/sqlite-jobs?page=${currentSqlitePage}&limit=${ITEMS_PER_PAGE}`);
+        const response = await fetch(`${API_BASE_URL}/sqlite-jobs?page=${currentSqlitePage}&limit=${ITEMS_PER_PAGE}&keyword=${encodeURIComponent(globalKeyword)}`);
         const result = await response.json();
 
         if (result.status === 'success' && result.data.length > 0) {
@@ -33,13 +35,13 @@ async function fetchChromaData() {
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 ChromaDB 撈取向量資料...</td></tr>`;
 
     try {
-        const url = `${API_BASE_URL}/chroma-jobs?page=${currentChromaPage}&limit=${ITEMS_PER_PAGE}&min_salary=${filterSalary}&min_hr_pr=${filterHrPr}`;
+        const url = `${API_BASE_URL}/chroma-jobs?page=${currentChromaPage}&limit=${ITEMS_PER_PAGE}&min_salary=${filterSalary}&min_hr_pr=${filterHrPr}&keyword=${encodeURIComponent(globalKeyword)}`;
         const response = await fetch(url);
         const result = await response.json();
 
         if (result.status === 'success' && result.data.length > 0) {
             renderChromaTable(result.data, result.total_in_db);
-            updateChromaPagination(result.has_more);
+            renderPagination('chroma', currentChromaPage, result.total_pages || 1);
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是 ChromaDB 尚未建立：${result.message || '無資料'}</td></tr>`;
         }
@@ -73,13 +75,11 @@ function renderSQLiteTable(data,totalCount,totalPages) {
         </tr>
     `).join('');
 
-    updateSqlitePagination(totalPages);
+    renderPagination('sqlite', currentSqlitePage, totalPages);
 }
 
 function renderChromaTable(data) {
     const chromaBody = document.getElementById('chroma-table-body');
-
-    // 更新統計數字
     const countDisplay = document.getElementById('chroma-doc-count');
     if (countDisplay) countDisplay.innerHTML = `${data.length} <span class="text-sm font-normal text-green-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span>`;
 
@@ -117,26 +117,90 @@ function renderChromaTable(data) {
     }).join('');
 }
 
-// ----------------- 分頁與篩選按鈕邏輯 -----------------
-function updateSqlitePagination(totalPages) {
-    document.getElementById('sqlite-page-info').innerText = `第 ${currentSqlitePage} 頁 / 共 ${totalPages} 頁`;
-    document.getElementById('btn-sqlite-prev').disabled = currentSqlitePage <= 1;
-    document.getElementById('btn-sqlite-next').disabled = currentSqlitePage >= totalPages;
+function renderPagination(type, currentPage, totalPages) {
+    const container = document.getElementById(`${type}-pagination-container`);
+    if (!container) return;
+    if (totalPages < 1) totalPages = 1;
+
+    let html = `<div class="flex items-center justify-between w-full">`;
+    html += `<span class="text-sm text-gray-600">目前第 ${currentPage} 頁 / 共 ${totalPages} 頁</span>`;
+    html += `<div class="flex items-center space-x-2">`;
+    
+    // 上一頁按鈕
+    html += `<button onclick="goToPage('${type}', ${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 text-sm font-medium text-gray-700">上一頁</button>`;
+
+    // 頁碼區塊 (顯示第一頁、最後一頁、當前頁的前後兩頁)
+    html += `<div class="hidden md:flex items-center space-x-1">`;
+    if (currentPage > 3) {
+        html += `<button onclick="goToPage('${type}', 1)" class="px-3 py-1 border border-transparent rounded hover:bg-indigo-50 text-sm">1</button>`;
+        if (currentPage > 4) html += `<span class="px-1 text-gray-400">...</span>`;
+    }
+
+    for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+        if (i === currentPage) {
+            html += `<button class="px-3 py-1 border border-indigo-600 bg-indigo-600 text-white rounded font-bold text-sm shadow-sm">${i}</button>`;
+        } else {
+            html += `<button onclick="goToPage('${type}', ${i})" class="px-3 py-1 border border-transparent rounded hover:bg-indigo-50 text-sm text-gray-700">${i}</button>`;
+        }
+    }
+
+    if (currentPage < totalPages - 2) {
+        if (currentPage < totalPages - 3) html += `<span class="px-1 text-gray-400">...</span>`;
+        html += `<button onclick="goToPage('${type}', ${totalPages})" class="px-3 py-1 border border-transparent rounded hover:bg-indigo-50 text-sm text-gray-700">${totalPages}</button>`;
+    }
+    html += `</div>`;
+
+    // 下一頁按鈕
+    html += `<button onclick="goToPage('${type}', ${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''} class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 text-sm font-medium text-gray-700">下一頁</button>`;
+    
+    // 跳轉輸入框
+    html += `<div class="ml-4 flex items-center space-x-2 border-l pl-4 border-gray-300">
+                <span class="text-sm text-gray-600">跳至</span>
+                <input type="number" id="jump-${type}" min="1" max="${totalPages}" class="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <button onclick="jumpToInput('${type}', ${totalPages})" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded transition-colors">Go</button>
+             </div>`;
+             
+    html += `</div></div>`;
+    container.innerHTML = html;
 }
-function changeSqlitePage(direction) {
-    currentSqlitePage += direction;
-    fetchSQLiteData();
+
+function goToPage(type, pageNo) {
+    if (type === 'sqlite') {
+        currentSqlitePage = pageNo;
+        fetchSQLiteData();
+    } else {
+        currentChromaPage = pageNo;
+        fetchChromaData();
+    }
 }
-function updateChromaPagination(hasMore) {
-    document.getElementById('chroma-page-info').innerText = `第 ${currentChromaPage} 頁`;
-    document.getElementById('btn-chroma-prev').disabled = currentChromaPage <= 1;
-    // 如果這次抓到的數量比 limit 少，代表沒下一頁了
-    document.getElementById('btn-chroma-next').disabled = !hasMore;
+
+function jumpToInput(type, totalPages) {
+    const inputVal = parseInt(document.getElementById(`jump-${type}`).value);
+    if (!inputVal || inputVal < 1 || inputVal > totalPages) {
+        alert(`請輸入 1 到 ${totalPages} 之間的有效頁碼！`);
+        return;
+    }
+    goToPage(type, inputVal);
 }
-function changeChromaPage(direction) {
-    currentChromaPage += direction;
-    fetchChromaData();
+
+function handleSearch(keyword) {
+    // 防抖機制：等你打完字停下來 500 毫秒後，才去 call 後端 API
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        globalKeyword = keyword.trim().toLowerCase();
+        
+        const activeTab = document.querySelector('.tab-content.active').id;
+        if (activeTab === 'tab-sqlite') {
+            currentSqlitePage = 1; // 搜尋新東西時把頁碼重置回第 1 頁
+            fetchSQLiteData();
+        } else if (activeTab === 'tab-chroma') {
+            currentChromaPage = 1;
+            fetchChromaData();
+        }
+    }, 500); 
 }
+
+// ================= Chroma 過濾器等 =================
 function applyChromaFilters() {
     const salInput = document.getElementById('filter-salary').value;
     const hrInput = document.getElementById('filter-hr-pr').value;
@@ -248,48 +312,6 @@ document.getElementById('json-modal').addEventListener('click', function (e) {
 function fillInput(text) {
     document.getElementById('chat-input').value = text;
     document.getElementById('chat-input').focus();
-}
-
-function handleSearch(keyword) {
-    // 為了實現大小寫不敏感的搜尋，統一轉成小寫，並清除頭尾空白
-    keyword = keyword.toLowerCase().trim();
-
-    // 知道現在使用者正在看哪個頁籤
-    const activeTab = document.querySelector('.tab-content.active').id;
-
-    let tbodyId = '';
-    if (activeTab === 'tab-sqlite') {
-        tbodyId = 'sqlite-table-body';
-    } else if (activeTab === 'tab-chroma') {
-        tbodyId = 'chroma-table-body';
-    } else {
-        return; // 如果在 LLM 頁籤就不做事
-    }
-
-    const tbody = document.getElementById(tbodyId);
-    if (!tbody) return;
-
-    // 抓出表格所有的資料列 <tr>
-    const rows = tbody.querySelectorAll('tr');
-
-    rows.forEach(row => {
-        // 防呆：如果只有一個 <td>，通常是 "正在載入..." 或 "錯誤訊息" 的提示列，跳過不處理
-        if (row.cells.length === 1) return;
-
-        // 只搜索id，公司名稱以及職缺名稱
-        const jobId = row.cells[0].innerText.toLowerCase();
-        const custName = row.cells[1].innerText.toLowerCase();
-        const jobName = row.cells[2].innerText.toLowerCase();
-
-        const searchTarget = `${jobId} ${custName} ${jobName}`;
-
-        // 判斷是否「包含」關鍵字
-        if (searchTarget.includes(keyword)) {
-            row.style.display = ''; // 包含的話，取消隱藏，正常顯示
-        } else {
-            row.style.display = 'none'; // 不包含的話，把這一列隱藏起來
-        }
-    });
 }
 
 function handleChatSubmit(e) {

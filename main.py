@@ -72,22 +72,34 @@ def init_db():
 init_db() # 啟動 API 時先建立表格
 
 @app.get("/api/sqlite-jobs")
-def get_sqlite_jobs(page: int = 1, limit: int = 20):
+def get_sqlite_jobs(page: int = 1, limit: int = 20,keyword:str=""):
     """從 SQLite 撈取原始職缺 JSON 資料"""
     try:
         # 連線到你的 SQLite 資料庫 (檔名請確認跟爬蟲存的一樣)
         conn = sqlite3.connect('all_jobs.db')
         cursor = conn.cursor()
         
+        # SQL條件與參數
+        where_clause = ""
+        search_params = ()
+        
+        if keyword:
+            where_clause = " WHERE job_id LIKE ? OR cust_name LIKE ? OR job_name LIKE ?"
+            like_kw = f"%{keyword}%"
+            search_params = (like_kw, like_kw, like_kw)
+        
         # 先算總共有幾筆資料
-        cursor.execute("SELECT COUNT(*) FROM job_documents")
+        count_query = f"SELECT COUNT(*) FROM job_documents{where_clause}"
+        cursor.execute(count_query, search_params)
         total_count = cursor.fetchone()[0]
         
         # 計算位移量
         offset = (page - 1) * limit
         
         # 撈取當前頁面的資料
-        cursor.execute("SELECT job_id, job_document, job_name, cust_name, job_link FROM job_documents LIMIT ? OFFSET ?", (limit, offset))
+        select_query = f"SELECT job_id, job_document, job_name, cust_name, job_link FROM job_documents{where_clause} LIMIT ? OFFSET ?"
+        final_params = search_params + (limit, offset)
+        cursor.execute(select_query, final_params)
         rows = cursor.fetchall()
         
         jobs = []
@@ -117,7 +129,7 @@ def get_sqlite_jobs(page: int = 1, limit: int = 20):
             conn.close()
 
 @app.get("/api/chroma-jobs")
-def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_pr: float = 0.0):
+def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_pr: float = 0.0,keyword:str=""):
     """從 ChromaDB 撈取向量化後的 Metadata 與 Documents"""
     try:
         # 連線到本機的 ChromaDB 資料夾
@@ -143,13 +155,22 @@ def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_
             # 強制轉成 float 確保型態正確
             conditions.append({"hrBehaviorPR": {"$gte": float(min_hr_pr)}})
             
+        if keyword:
+            conditions.append({
+                "$or": [
+                    {"job_id": {"$contains": keyword}},
+                    {"jobName": {"$contains": keyword}},
+                    {"custName": {"$contains": keyword}}
+                ]
+            })
+            
         where_clause = None
         if len(conditions) == 1:
             where_clause = conditions[0]
         elif len(conditions) > 1:
             where_clause = {"$and": conditions}
 
-        # === 加上這兩行 Debug 用的 Print ===
+        # === Debug 用的 Print ===
         print(f"🕵️ [Debug] 前端傳過來的參數 -> 薪資: {min_salary} (type: {type(min_salary)}), PR: {min_hr_pr} (type: {type(min_hr_pr)})")
         print(f"🕵️ [Debug] 丟給 Chroma 的條件 -> {where_clause}")
             
@@ -179,7 +200,7 @@ def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_
             "data": jobs, 
             "total_in_db": total_in_db, # 這是整個資料庫的總數，不是篩選後的
             "page": page,
-            "has_more": len(jobs) == limit # 如果回傳的數量等於 limit，代表可能還有下一頁
+            "total_pages":math.ceil(total_in_db / limit) if total_in_db > 0 else 1,
         }
     except Exception as e:
         return {"status": "error", "message": f"ChromaDB 連線錯誤: {str(e)}"}

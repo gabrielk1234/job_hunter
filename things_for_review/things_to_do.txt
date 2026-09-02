@@ -4,7 +4,7 @@
 * main 中area和job cate要修改
 * RAG用小chunk, 再連接回去找整個document
 LLM沒有記憶功能（只有短期）
-！database頁面搜尋只有當前頁面，並非整個資料庫
+* database頁面搜尋只有當前頁面，並非整個資料庫
 
 ## 爬蟲
 * 爬蟲程式存進資料庫的部分要修改
