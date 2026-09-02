@@ -4,6 +4,8 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 // 設定目前頁碼跟一頁要抓幾筆
 let currentSqlitePage = 1;
 let currentChromaPage = 1;
+let currentSqliteSubTab = 'all'; // 'all' (總資料庫) 或 'latest' (剛爬取的資料)
+let currentChromaSubTab = 'all'; // 'all' 或 'latest'
 let globalKeyword = ''; // 新增全域搜尋變數
 let searchTimeout;      // 用來處理打字防抖 (Debounce)
 const ITEMS_PER_PAGE = 20; // 改成一頁 20 筆畫面比較好看
@@ -12,16 +14,96 @@ const ITEMS_PER_PAGE = 20; // 改成一頁 20 筆畫面比較好看
 let filterSalary = 0;
 let filterHrPr = 0;
 
+function switchSubTab(dbType, subTab) {
+    if (dbType === 'sqlite') {
+        currentSqliteSubTab = subTab;
+        currentSqlitePage = 1;
+
+        const btnAll = document.getElementById('subtab-sqlite-all');
+        const btnLatest = document.getElementById('subtab-sqlite-latest');
+        const viewTitle = document.getElementById('sqlite-view-title');
+        const indicator = document.getElementById('sqlite-subtab-indicator');
+
+        if (subTab === 'all') {
+            btnAll.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-indigo-600 shadow-sm transition-all duration-200";
+            btnLatest.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-white/60 transition-all duration-200";
+            if (viewTitle) viewTitle.innerText = "總資料庫紀錄";
+            if (indicator) indicator.classList.add('hidden');
+        } else {
+            btnLatest.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-indigo-600 shadow-sm transition-all duration-200";
+            btnAll.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-white/60 transition-all duration-200";
+            if (viewTitle) viewTitle.innerText = "剛爬取的職缺紀錄";
+            if (indicator) indicator.classList.remove('hidden');
+        }
+
+        fetchSQLiteData();
+    } else if (dbType === 'chroma') {
+        currentChromaSubTab = subTab;
+        currentChromaPage = 1;
+
+        const btnAll = document.getElementById('subtab-chroma-all');
+        const btnLatest = document.getElementById('subtab-chroma-latest');
+        const viewTitle = document.getElementById('chroma-view-title');
+        const indicator = document.getElementById('chroma-subtab-indicator');
+
+        if (subTab === 'all') {
+            btnAll.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 shadow-sm transition-all duration-200";
+            btnLatest.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-white/60 transition-all duration-200";
+            if (viewTitle) viewTitle.innerText = "已映射 Metadata 與 Documents";
+            if (indicator) indicator.classList.add('hidden');
+        } else {
+            btnLatest.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 shadow-sm transition-all duration-200";
+            btnAll.className = "flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-white/60 transition-all duration-200";
+            if (viewTitle) viewTitle.innerText = "剛爬取之 Metadata 與 Documents";
+            if (indicator) indicator.classList.remove('hidden');
+        }
+
+        fetchChromaData();
+    }
+}
+
 async function fetchSQLiteData() {
     const tbody = document.getElementById('sqlite-table-body');
     tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 SQLite 撈取資料...</td></tr>`;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/sqlite-jobs?page=${currentSqlitePage}&limit=${ITEMS_PER_PAGE}&keyword=${encodeURIComponent(globalKeyword)}`);
+        const isLatest = currentSqliteSubTab === 'latest';
+        const response = await fetch(`${API_BASE_URL}/sqlite-jobs?page=${currentSqlitePage}&limit=${ITEMS_PER_PAGE}&keyword=${encodeURIComponent(globalKeyword)}&latest_only=${isLatest}`);
         const result = await response.json();
+
+        // 更新最新爬取數量徽章
+        const latestBadge = document.getElementById('sqlite-latest-badge');
+        if (latestBadge && result.latest_count !== undefined) {
+            latestBadge.innerText = result.latest_count;
+        }
 
         if (result.status === 'success' && result.data.length > 0) {
             renderSQLiteTable(result.data, result.total, result.total_pages);
+        } else if (result.status === 'success' && result.data.length === 0) {
+            const titleRow = document.getElementById('sqlite-total-count');
+            if (titleRow) titleRow.innerText = `總計: 0 筆`;
+            
+            if (isLatest) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center space-y-3">
+                                <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xl shadow-inner">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <p class="font-bold text-gray-700">目前尚無剛爬取的資料</p>
+                                <p class="text-xs text-gray-400 max-w-sm">當您在「任務控制中心」啟動並完成爬蟲後，最新抓取到的職缺會立即分類顯示在此分頁！</p>
+                                <a href="/scrapper" class="mt-2 text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm">
+                                    <i class="fa-solid fa-spider mr-1.5"></i> 前往爬蟲控制器
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-folder-open mr-2"></i> 資料庫目前為空。</td></tr>`;
+            }
+            renderPagination('sqlite', 1, 1);
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是後端回報錯誤：${result.message || '資料庫為空'}</td></tr>`;
         }
@@ -32,46 +114,83 @@ async function fetchSQLiteData() {
 
 async function fetchChromaData() {
     const tbody = document.getElementById('chroma-table-body');
-    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 ChromaDB 撈取向量資料...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> 正在連線至 ChromaDB 撈取向量資料...</td></tr>`;
 
     try {
-        const url = `${API_BASE_URL}/chroma-jobs?page=${currentChromaPage}&limit=${ITEMS_PER_PAGE}&min_salary=${filterSalary}&min_hr_pr=${filterHrPr}&keyword=${encodeURIComponent(globalKeyword)}`;
+        const isLatest = currentChromaSubTab === 'latest';
+        const url = `${API_BASE_URL}/chroma-jobs?page=${currentChromaPage}&limit=${ITEMS_PER_PAGE}&min_salary=${filterSalary}&min_hr_pr=${filterHrPr}&keyword=${encodeURIComponent(globalKeyword)}&latest_only=${isLatest}`;
         const response = await fetch(url);
         const result = await response.json();
+
+        // 更新最新爬取數量徽章
+        const latestBadge = document.getElementById('chroma-latest-badge');
+        if (latestBadge && result.latest_count !== undefined) {
+            latestBadge.innerText = result.latest_count;
+        }
 
         if (result.status === 'success' && result.data.length > 0) {
             renderChromaTable(result.data, result.total_in_db);
             renderPagination('chroma', currentChromaPage, result.total_pages || 1);
+        } else if (result.status === 'success' && result.data.length === 0) {
+            const countDisplay = document.getElementById('chroma-doc-count');
+            if (countDisplay) countDisplay.innerHTML = `0 <span class="text-sm font-normal text-gray-400 ml-2">無資料</span>`;
+            
+            if (isLatest) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center space-y-3">
+                                <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-xl shadow-inner">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <p class="font-bold text-gray-700">目前尚無剛向量化的新資料</p>
+                                <p class="text-xs text-gray-400 max-w-sm">請前往爬蟲控制器啟動任務，切割後的向量資料將自動分類顯示於此！</p>
+                                <a href="/scrapper" class="mt-2 text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm">
+                                    <i class="fa-solid fa-spider mr-1.5"></i> 前往爬蟲控制器
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500"><i class="fa-solid fa-folder-open mr-2"></i> ChromaDB 目前無符合資料。</td></tr>`;
+            }
+            renderPagination('chroma', 1, 1);
         } else {
-            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是 ChromaDB 尚未建立：${result.message || '無資料'}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-circle-exclamation mr-2"></i> 找不到資料，或是 ChromaDB 尚未建立：${result.message || '無資料'}</td></tr>`;
         }
     } catch (error) {
-        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-plug-circle-xmark mr-2"></i> 無法連線至後端。請確認 FastAPI (Uvicorn) 已啟動。</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-plug-circle-xmark mr-2"></i> 無法連線至後端。請確認 FastAPI (Uvicorn) 已啟動。</td></tr>`;
     }
 }
 
-function renderSQLiteTable(data,totalCount,totalPages) {
+function renderSQLiteTable(data, totalCount, totalPages) {
     const sqliteBody = document.getElementById('sqlite-table-body');
 
     // 更新總計數量標籤
     const titleRow = document.getElementById('sqlite-total-count');
-    if (titleRow) titleRow.innerText = `總計: ${data.length} 筆`;
+    if (titleRow) titleRow.innerText = `總計: ${totalCount !== undefined ? totalCount : data.length} 筆`;
 
     sqliteBody.innerHTML = data.map(row => `
-        <tr class="hover:bg-indigo-50 transition-colors group">
-            <td class="px-6 py-4 font-mono text-xs text-gray-500">${row.job_id}</td>
+        <tr class="hover:bg-indigo-50/70 transition-colors group">
+            <td class="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
+                <div class="flex items-center space-x-1.5">
+                    <span>${row.job_id}</span>
+                    ${row.is_latest ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-xs"><i class="fa-solid fa-bolt text-amber-500 mr-1 text-[8px]"></i>新</span>` : ''}
+                </div>
+            </td>
             <td class="px-6 py-4 font-medium text-gray-800">${row.custName}</td>
-            <td class="px-6 py-4 text-gray-600 truncate max-w-xs">${row.jobName}</td>
-            <td class="px-6 py-4 text-left">
-                <a href="${row.job_link}" target="_blank" class="text-primary hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+            <td class="px-6 py-4 text-gray-600 truncate max-w-xs font-medium">${row.jobName}</td>
+            <td class="px-6 py-4 text-left whitespace-nowrap">
+                <a href="${row.job_link}" target="_blank" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors inline-flex items-center">
                     查看職缺 <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs"></i>
                 </a>
             </td>
-            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
-                <a href="/analysis?job_id=${row.job_id}" class="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap">
+            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2 whitespace-nowrap">
+                <a href="/analysis?job_id=${row.job_id}" class="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI 解析
                 </a>
-                <button onclick='openModal(${JSON.stringify(row.raw_json).replace(/'/g, "&#39;")}, "${row.job_id}")' class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                <button onclick='openModal(${JSON.stringify(row.raw_json).replace(/'/g, "&#39;")}, "${row.job_id}")' class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
                     JSON
                 </button>
             </td>
@@ -81,10 +200,10 @@ function renderSQLiteTable(data,totalCount,totalPages) {
     renderPagination('sqlite', currentSqlitePage, totalPages);
 }
 
-function renderChromaTable(data) {
+function renderChromaTable(data, totalCount) {
     const chromaBody = document.getElementById('chroma-table-body');
     const countDisplay = document.getElementById('chroma-doc-count');
-    if (countDisplay) countDisplay.innerHTML = `${data.length} <span class="text-sm font-normal text-green-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span>`;
+    if (countDisplay) countDisplay.innerHTML = `${totalCount !== undefined ? totalCount : data.length} <span class="text-sm font-normal text-emerald-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span>`;
 
     chromaBody.innerHTML = data.map(row => {
         // 防呆處理，避免 metadata 為空導致程式崩潰
@@ -101,20 +220,25 @@ function renderChromaTable(data) {
         const hrBehaviorPR = meta.hrBehaviorPR || 0;
 
         return `
-        <tr class="hover:bg-emerald-50 transition-colors">
-            <td class="px-6 py-4 font-mono text-xs text-gray-500">${row.id}</td>
+        <tr class="hover:bg-emerald-50/70 transition-colors">
+            <td class="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
+                <div class="flex items-center space-x-1.5">
+                    <span>${row.id}</span>
+                    ${row.is_latest ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-xs"><i class="fa-solid fa-bolt text-amber-500 mr-1 text-[8px]"></i>新</span>` : ''}
+                </div>
+            </td>
             <td class="px-6 py-4 font-medium text-gray-800">${custName}</td>
             <td class="px-6 py-4 font-medium text-gray-800 truncate max-w-[200px]">${jobName}</td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 whitespace-nowrap">
                 <span class="bg-gray-100 border border-gray-200 text-gray-600 text-xs px-2 py-1 rounded-md shadow-sm">${jobType}</span>
             </td>
-            <td class="px-6 py-4 text-gray-600 font-semibold">${salary}</td>
-            <td class="px-6 py-4 text-gray-600 font-semibold">${hrBehaviorPR.toFixed(2)}</td>
-            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2">
-                <a href="/analysis?job_id=${meta.job_id || row.id}" class="text-white bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap">
+            <td class="px-6 py-4 text-gray-600 font-semibold whitespace-nowrap">${salary}</td>
+            <td class="px-6 py-4 text-gray-600 font-semibold whitespace-nowrap">${hrBehaviorPR.toFixed(2)}</td>
+            <td class="px-6 py-4 text-right flex items-center justify-end space-x-2 whitespace-nowrap">
+                <a href="/analysis?job_id=${meta.job_id || row.id}" class="text-white bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI 解析
                 </a>
-                <button onclick='openModal(${JSON.stringify(row).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                <button onclick='openModal(${JSON.stringify(row).replace(/'/g, "&#39;")}, "Chroma ID: ${row.id}")' class="text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
                     Meta
                 </button>
             </td>
@@ -362,8 +486,21 @@ function handleChatSubmit(e) {
     }, 1000);
 }
 
-// 初始化：一打開網頁就去後端撈資料
+// 初始化：一打開網頁就去後端撈資料，並根據 URL 參數切換分頁
 window.onload = () => {
-    fetchSQLiteData();
-    fetchChromaData();
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('view') || urlParams.get('subtab');
+    const dbParam = urlParams.get('db') || urlParams.get('tab');
+
+    if (dbParam === 'chroma') {
+        switchTab('chroma');
+    }
+
+    if (viewParam === 'latest') {
+        switchSubTab('sqlite', 'latest');
+        switchSubTab('chroma', 'latest');
+    } else {
+        fetchSQLiteData();
+        fetchChromaData();
+    }
 };

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional
 from google import genai
 from google.genai import types
+from curl_cffi import requests as cffi_requests
 
 import asyncio
 import sqlite3
@@ -90,33 +91,49 @@ def init_db():
 init_db() # 啟動 API 時先建立表格
 
 @app.get("/api/sqlite-jobs")
-def get_sqlite_jobs(page: int = 1, limit: int = 20,keyword:str=""):
+def get_sqlite_jobs(page: int = 1, limit: int = 20, keyword: str = "", latest_only: bool = False):
     """從 SQLite 撈取原始職缺 JSON 資料"""
     try:
         # 連線到你的 SQLite 資料庫 (檔名請確認跟爬蟲存的一樣)
         conn = sqlite3.connect('all_jobs.db')
         cursor = conn.cursor()
         
-        # SQL條件與參數
-        where_clause = ""
-        search_params = ()
+        where_clauses = []
+        search_params = []
+        
+        if latest_only:
+            latest_ids = scraper_manager.latest_scraped_job_ids
+            if not latest_ids:
+                return {
+                    "status": "success",
+                    "data": [],
+                    "total": 0,
+                    "page": 1,
+                    "total_pages": 1,
+                    "latest_count": 0
+                }
+            placeholders = ",".join(["?"] * len(latest_ids))
+            where_clauses.append(f"job_id IN ({placeholders})")
+            search_params.extend(latest_ids)
         
         if keyword:
-            where_clause = " WHERE job_id LIKE ? OR cust_name LIKE ? OR job_name LIKE ?"
+            where_clauses.append("(job_id LIKE ? OR cust_name LIKE ? OR job_name LIKE ?)")
             like_kw = f"%{keyword}%"
-            search_params = (like_kw, like_kw, like_kw)
+            search_params.extend([like_kw, like_kw, like_kw])
+        
+        where_sql = f" WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
         
         # 先算總共有幾筆資料
-        count_query = f"SELECT COUNT(*) FROM job_documents{where_clause}"
-        cursor.execute(count_query, search_params)
+        count_query = f"SELECT COUNT(*) FROM job_documents{where_sql}"
+        cursor.execute(count_query, tuple(search_params))
         total_count = cursor.fetchone()[0]
         
         # 計算位移量
         offset = (page - 1) * limit
         
         # 撈取當前頁面的資料
-        select_query = f"SELECT job_id, job_document, job_name, cust_name, job_link FROM job_documents{where_clause} LIMIT ? OFFSET ?"
-        final_params = search_params + (limit, offset)
+        select_query = f"SELECT job_id, job_document, job_name, cust_name, job_link FROM job_documents{where_sql} LIMIT ? OFFSET ?"
+        final_params = tuple(search_params) + (limit, offset)
         cursor.execute(select_query, final_params)
         rows = cursor.fetchall()
         
@@ -129,7 +146,8 @@ def get_sqlite_jobs(page: int = 1, limit: int = 20,keyword:str=""):
                     "custName": cust_name,
                     "jobName": job_name,
                     "raw_json": flatten(job_data_str),
-                    "job_link":job_link
+                    "job_link": job_link,
+                    "is_latest": job_id in scraper_manager.latest_scraped_job_ids
                 })
             except Exception as e:
                 print(f"解析 JSON 失敗 ID: {job_id}")
@@ -139,7 +157,9 @@ def get_sqlite_jobs(page: int = 1, limit: int = 20,keyword:str=""):
             "data": jobs, 
             "total": total_count,
             "page": page,
-            "total_pages": math.ceil(total_count / limit) if total_count > 0 else 1}
+            "total_pages": math.ceil(total_count / limit) if total_count > 0 else 1,
+            "latest_count": len(scraper_manager.latest_scraped_job_ids)
+        }
     except Exception as e:
         return {"status": "error", "message": f"SQLite 連線錯誤: {str(e)}"}
     finally:
@@ -147,9 +167,19 @@ def get_sqlite_jobs(page: int = 1, limit: int = 20,keyword:str=""):
             conn.close()
 
 @app.get("/api/chroma-jobs")
-def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_pr: float = 0.0,keyword:str=""):
+def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_pr: float = 0.0, keyword: str = "", latest_only: bool = False):
     """從 ChromaDB 撈取向量化後的 Metadata 與 Documents"""
     try:
+        if latest_only and not scraper_manager.latest_scraped_job_ids:
+            return {
+                "status": "success",
+                "data": [],
+                "total_in_db": 0,
+                "page": 1,
+                "total_pages": 1,
+                "latest_count": 0
+            }
+
         # 連線到本機的 ChromaDB 資料夾
         client = chromadb.PersistentClient(path="./my_job_db")
         collection = client.get_collection(name="job_chunks")
@@ -158,6 +188,14 @@ def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_
         
         # 組合 ChromaDB 的過濾條件 (where clause)
         conditions = []
+        
+        if latest_only:
+            latest_ids = scraper_manager.latest_scraped_job_ids
+            if len(latest_ids) == 1:
+                conditions.append({"job_id": {"$eq": latest_ids[0]}})
+            elif len(latest_ids) > 1:
+                conditions.append({"job_id": {"$in": latest_ids}})
+
         if min_salary > 0:
             if min_salary <= 40000:
                 conditions.append({"salaryMin": {"$gte": min_salary}})
@@ -189,7 +227,7 @@ def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_
             where_clause = {"$and": conditions}
 
         # === Debug 用的 Print ===
-        print(f"🕵️ [Debug] 前端傳過來的參數 -> 薪資: {min_salary} (type: {type(min_salary)}), PR: {min_hr_pr} (type: {type(min_hr_pr)})")
+        print(f"🕵️ [Debug] 前端傳過來的參數 -> 薪資: {min_salary}, PR: {min_hr_pr}, latest_only: {latest_only}")
         print(f"🕵️ [Debug] 丟給 Chroma 的條件 -> {where_clause}")
             
         # 準備查詢參數
@@ -202,153 +240,258 @@ def get_chroma_jobs(page: int = 1, limit: int = 20, min_salary: int = 0, min_hr_
             
         results = collection.get(**query_args)
         
-        # ChromaDB 比較難直接算篩選後的總數，我們給個大概或是回傳當前抓到的總數
-        total_in_db = collection.count()
+        # 計算總數
+        if where_clause:
+            all_filtered = collection.get(where=where_clause)
+            total_in_db = len(all_filtered['ids']) if all_filtered and all_filtered.get('ids') else 0
+        else:
+            total_in_db = collection.count()
         
         jobs = []
         if results and results.get('ids'):
             for i in range(len(results['ids'])):
+                meta = results['metadatas'][i] if results['metadatas'] else {}
                 jobs.append({
                     "id": results['ids'][i],
-                    "metadata": results['metadatas'][i] if results['metadatas'] else {},
-                    "document": results['documents'][i] if results['documents'] else ""
+                    "metadata": meta,
+                    "document": results['documents'][i] if results['documents'] else "",
+                    "is_latest": meta.get("job_id") in scraper_manager.latest_scraped_job_ids
                 })
         return {
             "status": "success", 
             "data": jobs, 
-            "total_in_db": total_in_db, # 這是整個資料庫的總數，不是篩選後的
+            "total_in_db": total_in_db,
             "page": page,
-            "total_pages":math.ceil(total_in_db / limit) if total_in_db > 0 else 1,
+            "total_pages": math.ceil(total_in_db / limit) if total_in_db > 0 else 1,
+            "latest_count": len(scraper_manager.latest_scraped_job_ids)
         }
     except Exception as e:
         return {"status": "error", "message": f"ChromaDB 連線錯誤: {str(e)}"}
     
+class ScraperManager:
+    def __init__(self):
+        self.is_running = False
+        self.progress = 0
+        self.logs = []
+        self.latest_scraped_job_ids = []
+        self.active_websockets = set()
+        self.task: Optional[asyncio.Task] = None
+
+    async def broadcast(self, message: dict):
+        # 記錄日誌與進度
+        self.logs.append(message)
+        if len(self.logs) > 1000:
+            self.logs.pop(0)
+        
+        if "progress" in message:
+            self.progress = message["progress"]
+
+        # 廣播給所有連線中的前端 WebSocket
+        dead_ws = []
+        for ws in list(self.active_websockets):
+            try:
+                await ws.send_json(message)
+            except Exception:
+                dead_ws.append(ws)
+        
+        for ws in dead_ws:
+            self.active_websockets.discard(ws)
+
+    def start_scrape(self, areas: list, jobcats: list, keyword: str):
+        if self.is_running:
+            return False
+        self.is_running = True
+        self.progress = 0
+        self.logs = []
+        self.latest_scraped_job_ids = []
+        self.task = asyncio.create_task(self._run_scrape(areas, jobcats, keyword))
+        return True
+
+    async def _run_scrape(self, areas: list, jobcats: list, keyword: str):
+        conn = None
+        try:
+            conn = sqlite3.connect('all_jobs.db')
+            cursor = conn.cursor()
+            
+            await self.broadcast({"log": "🕸️ 背景爬蟲任務開始執行！", "progress": 2})
+            
+            config_file = './config.json'
+            table_name = 'job_documents'
+            chroma_db = './my_job_db'
+            chroma_collection = 'job_chunks'
+
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config_json = json.load(f)
+            headers = config_json['headers']
+            cookies = browser_cookie3.chrome(domain_name='104.com.tw', cookie_file=r"/Users/gkko/Library/Application Support/Google/Chrome/Profile 13/Cookies")
+            cookies_dict = requests.utils.dict_from_cookiejar(cookies)
+
+            client = chromadb.PersistentClient(path=chroma_db)
+            collection = client.get_or_create_collection(name=chroma_collection)
+            await self.broadcast({"log": "✅ 資料庫連線完成", "progress": 5})
+
+            area_str = ",".join(areas)
+            jobcat_str = ",".join(jobcats)
+            await self.broadcast({"log": f"設定條件為: 關鍵字: {keyword}", "progress": 8})
+        
+            params = {
+                'area': area_str,
+                'jobcat': jobcat_str,
+                'jobsource': 'joblist_search',
+                'mode': 's',
+                'orLabel': 'foreigners@overseasStudents^20,foreigners@chineseDiasporas^20',
+                'order': '16',
+                'page': '1',
+                'pagesize': '20',
+            }
+            if keyword:
+                params['keyword'] = keyword
+
+            await self.broadcast({"log": "🔍 正在向 104 請求職缺列表...", "progress": 10})
+            print(f"【Debug】_run_scrape -> cookies:{cookies_dict}")
+            response = await asyncio.to_thread(cffi_requests.get, 'https://www.104.com.tw/jobs/search/api/jobs', params=params, cookies=cookies, headers=headers,impersonate="chrome120")
+            
+            if response.status_code != 200:
+                # 檢查一下結果
+                print("狀態碼:", response.status_code)
+                print("回傳內容:", response.text[:200])
+                await self.broadcast({"log": "❌ 無法獲取列表，可能是 Cookie 過期或是被擋了", "done": True})
+                return
+
+            job_json = response.json().get('data', [])
+            total_jobs = len(job_json)
+            
+            if total_jobs == 0:
+                await self.broadcast({"log": "⚠️ 找不到符合條件的職缺喔！", "progress": 100, "done": True})
+                return
+
+            await self.broadcast({"log": f"📊 共找到 {total_jobs} 個職缺，準備開始抓取細節！", "progress": 15})
+
+            import random as rd
+            from tools.pharse import get_document, get_metadata, create_chunks
+
+            for idx, job in enumerate(job_json, 1):
+                job_id = job['jobNo']
+                job_code = job['link']['job'].split('/')[-1]
+                cust_name = job.get('custName', '未知公司')
+
+                await self.broadcast({"log": f"➤ [{idx}/{total_jobs}] 正在抓取：{cust_name} - {job_code}..."})
+
+                job_detail_response = await asyncio.to_thread(requests.get, f'https://www.104.com.tw/api/jobs/{job_code}', cookies=cookies, headers=headers)
+                
+                if job_detail_response.status_code == 200:
+                    job_detail_json = job_detail_response.json().get('data')
+                    
+                    # ChromaDB 儲存
+                    documents = get_document(job_detail_json)
+                    metadata = get_metadata(job_detail_json)
+                    chunks = create_chunks(job_id=job_id, full_document=documents, base_metadata=metadata)
+                    
+                    chunk_ids = [str(c['ids']) for c in chunks]
+                    chunk_documents = [c['text'] for c in chunks]
+                    chunk_metadatas = [c['metadata'] for c in chunks]
+                    collection.add(
+                        documents=chunk_documents, 
+                        metadatas=chunk_metadatas, 
+                        ids=chunk_ids
+                    )
+                    
+                    # SQLite 儲存
+                    job_name = metadata['jobName']
+                    cust_name = metadata['custName']
+                    job_link = metadata['analysisUrl'].replace('s/apply/analysis/', '/')
+                    cursor.execute(f'''
+                        INSERT OR REPLACE INTO {table_name} (job_id, job_document, job_name, cust_name, job_link) 
+                        VALUES (?, ?, ?, ?, ?)
+                    ''', (job_id, documents, job_name, cust_name, job_link))
+                    conn.commit()
+                    
+                    if job_id not in self.latest_scraped_job_ids:
+                        self.latest_scraped_job_ids.append(job_id)
+
+                    progress_percent = int(15 + (idx / total_jobs) * 85)
+                    await self.broadcast({
+                        "log": f"  └─ ✅ 成功存入：{job_id}",
+                        "progress": progress_percent,
+                        "latest_count": len(self.latest_scraped_job_ids)
+                    })
+                else: 
+                    await self.broadcast({"log": f"  └─ ❌ {job_code} 獲取資料失敗！"})
+                
+                sleep_time = rd.randint(2, 5)
+                await self.broadcast({"log": f"  └─ ⏳ 休息 {sleep_time} 秒以防被封鎖..."})
+                await asyncio.sleep(sleep_time)
+
+            await self.broadcast({
+                "log": f"🎉 爬蟲任務全部完工！共抓取 {len(self.latest_scraped_job_ids)} 筆職缺。",
+                "progress": 100,
+                "done": True,
+                "latest_count": len(self.latest_scraped_job_ids)
+            })
+
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            print(f"【系統異常】\n{error_trace}")
+            error_type = type(e).__name__
+            await self.broadcast({
+                "log": f"❌ 致命錯誤 [{error_type}]: {str(e)}。詳細報錯請看後端終端機！", 
+                "done": True
+            })
+        finally:
+            self.is_running = False
+            if conn:
+                conn.close()
+
+scraper_manager = ScraperManager()
+
 @app.websocket("/api/ws-scrape")
 async def websocket_scrape(websocket: WebSocket):
-    # 接起前端打來的「電話」
     await websocket.accept()
+    scraper_manager.active_websockets.add(websocket)
     try:
-        conn = sqlite3.connect('all_jobs.db')
-        cursor = conn.cursor()
-        # 1. 接收前端傳來的 JSON 參數
-        data = await websocket.receive_json()
-        areas = data.get("areas", [])
-        jobcats = data.get("jobcats", [])
-        keywordInput = data.get("keyword","")
-        
-        await websocket.send_json({"log": "🕸️ WebSocket 連線成功，背景爬蟲任務開始執行！", "progress": 2})
-        
-        # 讀取設定檔與連線資料庫
-        config_file = './config.json'
-        table_name = 'job_documents'
-        chroma_db = './my_job_db'
-        chroma_collection = 'job_chunks'
-
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config_json = json.load(f)
-        headers = config_json['headers']
-        cookies = browser_cookie3.chrome(domain_name='104.com.tw',cookie_file=r"/Users/gkko/Library/Application Support/Google/Chrome/Profile 13/Cookies")
-
-        client = chromadb.PersistentClient(path=chroma_db)
-        collection = client.get_or_create_collection(name=chroma_collection)
-        await websocket.send_json({"log": "✅ 資料庫連線完成", "progress": 5})
-
-        area_str = ",".join(areas)
-        jobcat_str = ",".join(jobcats)
-        await websocket.send_json({"log": f"設定條件為:關鍵字:{keywordInput}", "progress": 8})
-    
-        params = {
-            'keyword':keywordInput,
-            'area': area_str,
-            'jobcat': jobcat_str,
-            'jobsource': 'joblist_search',
-            'mode': 's',
-            'orLabel': 'foreigners@overseasStudents^20,foreigners@chineseDiasporas^20',
-            'order': '16',
-            'page': '1',
-            'pagesize': '20',
-        }
-
-        await websocket.send_json({"log": "🔍 正在向 104 請求職缺列表...", "progress": 10})
-        
-        # 💡 重要：使用 asyncio.to_thread 讓 requests.get 不會卡死這通 WebSocket 電話
-        response = await asyncio.to_thread(requests.get, 'https://www.104.com.tw/jobs/search/api/jobs', params=params, cookies=cookies, headers=headers)
-        
-        if response.status_code != 200:
-            await websocket.send_json({"log": "❌ 無法獲取列表，可能是 Cookie 過期或是被擋了", "done": True})
-            return
-
-        job_json = response.json()['data']
-        total_jobs = len(job_json)
-        
-        if total_jobs == 0:
-            await websocket.send_json({"log": "⚠️ 找不到符合條件的職缺喔！", "progress": 100, "done": True})
-            return
-
-        await websocket.send_json({"log": f"📊 共找到 {total_jobs} 個職缺，準備開始抓取細節！", "progress": 15})
-
-        import random as rd
-        from tools.pharse import get_document, get_metadata,create_chunks
-
-        for idx, job in enumerate(job_json, 1):
-            job_id = job['jobNo']
-            job_code = job['link']['job'].split('/')[-1]
-            cust_name = job.get('custName', '未知公司')
-
-            await websocket.send_json({"log": f"➤ [{idx}/{total_jobs}] 正在抓取：{cust_name} - {job_code}..."})
-
-            job_detail_response = await asyncio.to_thread(requests.get, f'https://www.104.com.tw/api/jobs/{job_code}', cookies=cookies, headers=headers)
-            
-            if job_detail_response.status_code == 200:
-                job_detail_json = job_detail_response.json().get('data')
-                
-                # ChromaDB 儲存
-                documents = get_document(job_detail_json)
-                metadata = get_metadata(job_detail_json)
-                chunks = create_chunks(job_id=job_id,full_document=documents,base_metadata=metadata)
-                
-                chunk_ids = [str(c['ids']) for c in chunks]
-                chunk_documents = [c['text'] for c in chunks]
-                chunk_metadatas = [c['metadata'] for c in chunks]
-                collection.add(
-                    documents=chunk_documents, 
-                    metadatas=chunk_metadatas, 
-                    ids=chunk_ids
-                )
-                
-                # SQLite 儲存
-                job_name = metadata['jobName']
-                cust_name = metadata['custName']
-                job_link = metadata['analysisUrl'].replace('s/apply/analysis/','/')
-                cursor.execute(f'''
-                    INSERT OR REPLACE INTO {table_name} (job_id, job_document,job_name,cust_name,job_link) 
-                    VALUES (?, ?, ?, ?,?)
-                ''', (job_id, documents,job_name,cust_name,job_link))
-                conn.commit()
-                
-                # 計算即時進度比例
-                progress_percent = int(15 + (idx / total_jobs) * 85)
-                await websocket.send_json({"log": f"  └─ ✅ 成功存入：{job_id}", "progress": progress_percent})
-            else: 
-                await websocket.send_json({"log": f"  └─ ❌ {job_code} 獲取資料失敗！"})
-            
-            # 💡 重要：這裡必須用 asyncio.sleep 而不是 time.sleep，才能讓訊息實時推出去
-            sleep_time = rd.randint(2, 5)
-            await websocket.send_json({"log": f"  └─ ⏳ 休息 {sleep_time} 秒以防被封鎖..."})
-            await asyncio.sleep(sleep_time)
-
-        await websocket.send_json({"log": "🎉 爬蟲任務全部完工！", "progress": 100, "done": True})
-
-    except WebSocketDisconnect:
-        print("前端斷開連線")
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        print(f"【系統異常】\n{error_trace}")
-        error_type = type(e).__name__
+        # 連線建立時立即發送當前狀態與歷史日誌
         await websocket.send_json({
-            "log": f"❌ 致命錯誤 [{error_type}]: {str(e)}。詳細報錯請看後端終端機！", 
-            "done": True
+            "type": "init_state",
+            "is_running": scraper_manager.is_running,
+            "progress": scraper_manager.progress,
+            "logs": scraper_manager.logs,
+            "latest_count": len(scraper_manager.latest_scraped_job_ids)
         })
+        
+        while True:
+            data = await websocket.receive_json()
+            action = data.get("action", "start")
+            if action == "start" or ("areas" in data and "jobcats" in data):
+                areas = data.get("areas", [])
+                jobcats = data.get("jobcats", [])
+                keyword = data.get("keyword", "")
+                started = scraper_manager.start_scrape(areas, jobcats, keyword)
+                if not started:
+                    await websocket.send_json({
+                        "log": "⚠️ 爬蟲任務已在背景執行中，請稍候完成！",
+                        "progress": scraper_manager.progress,
+                        "is_running": True,
+                        "latest_count": len(scraper_manager.latest_scraped_job_ids)
+                    })
+    except WebSocketDisconnect:
+        print("WebSocket 前端斷開連線 (背景爬蟲不受影響持續執行)")
+    except Exception as e:
+        print(f"WebSocket 連線異常: {e}")
+    finally:
+        scraper_manager.active_websockets.discard(websocket)
+
+@app.get("/api/scrape-status")
+def get_scrape_status():
+    """取得當前爬蟲狀態與進度"""
+    return {
+        "status": "success",
+        "data": {
+            "is_running": scraper_manager.is_running,
+            "progress": scraper_manager.progress,
+            "logs_count": len(scraper_manager.logs),
+            "latest_count": len(scraper_manager.latest_scraped_job_ids)
+        }
+    }
         
 @app.get("/api/get-profile")
 def get_profile(user_id: str):

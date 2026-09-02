@@ -105,6 +105,23 @@
                 <span>發射爬蟲！開始收集資料</span>
             </button>
 
+            <!-- 爬取完成跳轉提示橫幅 (任務完成時動態顯示) -->
+            <div id="completed-banner" class="hidden bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-white/20 p-3 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-circle-check text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">🎉 爬蟲任務已圓滿完成！</h3>
+                        <p class="text-sm text-emerald-100" id="completed-summary-text">成功抓取最新職缺資料，已同步存入 SQLite 與 ChromaDB。</p>
+                    </div>
+                </div>
+                <a href="/dashboard?view=latest" class="whitespace-nowrap bg-white text-emerald-700 hover:bg-emerald-50 hover:shadow-md font-bold px-5 py-3 rounded-xl shadow transition-all duration-200 flex items-center group">
+                    <span>前往儀表板查看剛爬取的資料</span>
+                    <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
             <!-- 終端機區塊 -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="bg-gray-800 px-4 py-3 border-b border-gray-700 flex justify-between items-center">
@@ -336,14 +353,189 @@
         }
     }
 
-    window.onload = loadOptions;
+    let ws = null;
+    let isScrapingRunning = false;
 
-    // WebSocket 連線與執行
+    function formatLogLine(logText) {
+        const logLine = document.createElement('div');
+        if (logText.includes('❌') || logText.includes('[Error]')) {
+            logLine.className = 'text-red-400';
+        } else if (logText.includes('⚠️')) {
+            logLine.className = 'text-yellow-400';
+        } else if (logText.includes('✅') || logText.includes('🎉')) {
+            logLine.className = 'text-emerald-400';
+        } else if (logText.includes('[System]')) {
+            logLine.className = 'text-blue-400';
+        } else {
+            logLine.className = 'text-emerald-300';
+        }
+        logLine.innerText = (logText.startsWith('>') || logText.startsWith('[') || logText.startsWith('➤') || logText.startsWith('  └─')) ? logText : `> ${logText}`;
+        return logLine;
+    }
+
+    function appendLogToTerminal(logText) {
+        const terminal = document.getElementById('terminal-content');
+        const scrollArea = document.getElementById('terminal-scroll');
+        terminal.appendChild(formatLogLine(logText));
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
+
+    function renderLogs(logsList) {
+        const terminal = document.getElementById('terminal-content');
+        const scrollArea = document.getElementById('terminal-scroll');
+        terminal.innerHTML = '';
+        if (!logsList || logsList.length === 0) {
+            terminal.innerHTML = `
+                <div class="text-gray-500">歡迎使用 JobHunter 爬蟲系統。</div>
+                <div class="text-gray-500">請在上方設定好目標，並點擊發射按鈕。</div>
+                <div class="text-gray-500">> _</div>
+            `;
+            return;
+        }
+        logsList.forEach(item => {
+            if (item && item.log) {
+                terminal.appendChild(formatLogLine(item.log));
+            }
+        });
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
+
+    function showCompletedBanner(count) {
+        const banner = document.getElementById('completed-banner');
+        const summaryText = document.getElementById('completed-summary-text');
+        if (banner) {
+            if (count !== undefined && count > 0) {
+                summaryText.innerText = `本次共成功抓取 ${count} 筆最新職缺，已同步更新至 SQLite 原始資料庫與 ChromaDB 向量庫！`;
+            } else {
+                summaryText.innerText = `成功抓取最新職缺資料，已同步存入 SQLite 與 ChromaDB。`;
+            }
+            banner.classList.remove('hidden');
+        }
+    }
+
+    function hideCompletedBanner() {
+        const banner = document.getElementById('completed-banner');
+        if (banner) {
+            banner.classList.add('hidden');
+        }
+    }
+
+    function setButtonRunning() {
+        isScrapingRunning = true;
+        hideCompletedBanner();
+        const btn = document.getElementById('start-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> 任務執行中，請稍候...`;
+        btn.classList.replace('from-indigo-600', 'from-gray-500');
+        btn.classList.replace('to-blue-500', 'to-gray-600');
+        btn.classList.remove('hover:-translate-y-1');
+        document.getElementById('live-indicator').style.display = 'inline-block';
+    }
+
+    function restoreButton(completed = false, latestCount = 0) {
+        isScrapingRunning = false;
+        const btn = document.getElementById('start-btn');
+        btn.disabled = false;
+        if (completed) {
+            btn.innerHTML = `<i class="fa-solid fa-rotate-right mr-2"></i> 重新設定並啟動任務`;
+            showCompletedBanner(latestCount);
+        } else {
+            btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i> <span>發射爬蟲！開始收集資料</span>`;
+        }
+        btn.classList.replace('from-gray-500', 'from-indigo-600');
+        btn.classList.replace('to-gray-600', 'to-blue-500');
+        btn.classList.add('hover:-translate-y-1');
+        document.getElementById('live-indicator').style.display = 'none';
+    }
+
+    function connectScraperWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host || '127.0.0.1:8000';
+        const wsUrl = `${protocol}//${host}/api/ws-scrape`;
+
+        try {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log("WebSocket 連線成功");
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+
+                    if (data.type === 'init_state') {
+                        if (data.logs && data.logs.length > 0) {
+                            renderLogs(data.logs);
+                        }
+                        if (data.progress !== undefined) {
+                            document.getElementById('progress-bar').style.width = data.progress + "%";
+                        }
+                        if (data.is_running) {
+                            setButtonRunning();
+                        } else if (data.logs && data.logs.length > 0) {
+                            restoreButton(data.progress === 100, data.latest_count);
+                        }
+                        return;
+                    }
+
+                    if (data.log) {
+                        const terminal = document.getElementById('terminal-content');
+                        if (terminal.innerText.includes('歡迎使用 JobHunter 爬蟲系統')) {
+                            terminal.innerHTML = '';
+                        }
+                        appendLogToTerminal(data.log);
+                    }
+
+                    if (data.progress !== undefined) {
+                        document.getElementById('progress-bar').style.width = data.progress + "%";
+                    }
+
+                    if (data.is_running !== undefined) {
+                        if (data.is_running) {
+                            setButtonRunning();
+                        } else {
+                            restoreButton(true, data.latest_count);
+                        }
+                    }
+
+                    if (data.done) {
+                        restoreButton(true, data.latest_count);
+                    }
+                } catch (e) {
+                    console.error("解析訊息失敗", e);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log("WebSocket 連線關閉，將在 3 秒後嘗試重連...");
+                setTimeout(() => {
+                    if (!ws || ws.readyState === WebSocket.CLOSED) {
+                        connectScraperWebSocket();
+                    }
+                }, 3000);
+            };
+
+            ws.onerror = (err) => {
+                console.error("WebSocket 連線錯誤", err);
+            };
+        } catch (err) {
+            console.error("建立 WebSocket 失敗", err);
+        }
+    }
+
+    window.onload = () => {
+        loadOptions();
+        connectScraperWebSocket();
+    };
+
+    // WebSocket 觸發與發送參數
     document.getElementById('start-btn').addEventListener('click', async () => {
+        if (isScrapingRunning) return;
+
         const areaUl = document.querySelector('#area-container > ul');
         const jobcatUl = document.querySelector('#jobcat-container > ul');
         const keywordInput = document.getElementById('keyword-input').value.trim();
-        console.log(keywordInput);
         
         if (!areaUl || !jobcatUl) {
             alert("⚠️ 選項資料尚未載入成功，請稍後再試！");
@@ -358,81 +550,31 @@
             return;
         }
 
-        const btn = document.getElementById('start-btn');
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> 任務執行中，請稍候...`;
-        btn.classList.replace('from-indigo-600', 'from-gray-500');
-        btn.classList.replace('to-blue-500', 'to-gray-600');
-        btn.classList.remove('hover:-translate-y-1');
-
-        document.getElementById('live-indicator').style.display = 'inline-block';
+        setButtonRunning();
         
         const terminal = document.getElementById('terminal-content');
-        const scrollArea = document.getElementById('terminal-scroll');
         const progressBar = document.getElementById('progress-bar');
         
-        terminal.innerHTML = "<div class='text-blue-400'>[System] 初始化通訊協定，準備建立 WebSocket 連線...</div>";
+        terminal.innerHTML = "<div class='text-blue-400'>[System] 初始化通訊協定，準備啟動背景爬蟲任務...</div>";
         progressBar.style.width = "0%";
 
-        try {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = window.location.host || '127.0.0.1:8000'; 
-            const wsUrl = `${protocol}//${host}/api/ws-scrape`;
-            
-            const ws = new WebSocket(wsUrl);
+        const payload = {
+            action: "start",
+            areas: selectedAreas,
+            jobcats: selectedJobcats,
+            keyword: keywordInput
+        };
 
-            ws.onopen = () => {
-                terminal.innerHTML += "<div class='text-emerald-400 font-bold'>[System] 連線已建立！發送參數至引擎...</div>";
-                ws.send(JSON.stringify({ areas: selectedAreas, jobcats: selectedJobcats,keyword:keywordInput}));
-            };
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                
-                if(data.log) {
-                    const logLine = document.createElement('div');
-                    if(data.log.includes('❌')) logLine.className = 'text-red-400';
-                    else if(data.log.includes('⚠️')) logLine.className = 'text-yellow-400';
-                    
-                    logLine.innerText = `> ${data.log}`;
-                    terminal.appendChild(logLine);
-                    scrollArea.scrollTop = scrollArea.scrollHeight;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(payload));
+        } else {
+            connectScraperWebSocket();
+            const checkOpen = setInterval(() => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    clearInterval(checkOpen);
+                    ws.send(JSON.stringify(payload));
                 }
-
-                if(data.progress !== undefined) {
-                    progressBar.style.width = data.progress + "%";
-                }
-
-                if(data.done) {
-                    restoreButton();
-                    terminal.innerHTML += "<div class='text-blue-400 mt-2'>[System] 連線已安全關閉。</div>";
-                    ws.close();
-                }
-            };
-
-            ws.onclose = (event) => {
-                if(!btn.disabled) return; 
-                terminal.innerHTML += `<div class='text-yellow-400 font-bold mt-2'>[System] ⚠️ 連線中斷。</div>`;
-                restoreButton();
-            };
-
-            ws.onerror = (error) => {
-                terminal.innerHTML += "<div class='text-red-400 font-bold mt-2'>[Error] ❌ 連線失敗！無法連接至伺服器。</div>";
-                restoreButton();
-            };
-
-        } catch (error) {
-            terminal.innerHTML += `<div class='text-red-500'>[Error] ❌ 程式錯誤：${error}</div>`;
-            restoreButton();
-        }
-
-        function restoreButton() {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-rotate-right mr-2"></i> 重新設定並啟動任務`;
-            btn.classList.replace('from-gray-500', 'from-indigo-600');
-            btn.classList.replace('to-gray-600', 'to-blue-500');
-            btn.classList.add('hover:-translate-y-1');
-            document.getElementById('live-indicator').style.display = 'none';
+            }, 200);
         }
     });
 </script>
