@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}職缺深度解析 - JobHunter{% endblock %}
+
+{% block head %}
+<style>
+    /* 客製化進度條動畫 */
+    @keyframes fillBar {
+        from { width: 0; }
+    }
+    .animate-fill {
+        animation: fillBar 1s ease-out forwards;
+    }
+    /* 隱藏捲軸但保持可捲動 */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="flex-1 flex flex-col h-screen overflow-y-auto bg-slate-50 relative">
+    
+    <!-- 頂部導航與標題 -->
+    <header class="bg-white shadow-sm border-b border-gray-200 py-4 px-6 md:px-8 sticky top-0 z-20 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <a href="/dashboard" class="text-gray-400 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-indigo-50">
+                <i class="fa-solid fa-arrow-left text-xl"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 flex items-center" id="header-job-name">
+                    載入中...
+                </h1>
+                <p class="text-sm text-gray-500 mt-1" id="header-cust-name">載入中...</p>
+            </div>
+        </div>
+        <div class="flex space-x-3">
+            <!-- 稍後由 JS 動態填入連結 -->
+            <a href="#" id="btn-cust-url" target="_blank" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors hidden md:flex items-center">
+                <i class="fa-solid fa-building mr-2"></i> 公司背景
+            </a>
+            <a href="#" id="btn-apply-url" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center shadow-indigo-500/30">
+                <i class="fa-solid fa-paper-plane mr-2"></i> 前往 104 查看
+            </a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto w-full p-6 md:p-8 space-y-8">
+        
+        <!-- ⚠️ 履歷更新警告橫幅 (預設隱藏) -->
+        <div id="outdated-banner" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-xl mr-3"></i>
+                <div>
+                    <h3 class="font-bold text-yellow-800 text-sm">履歷已更新</h3>
+                    <p class="text-xs text-yellow-700 mt-0.5">這份分析是基於舊版履歷生成的。您剛剛上傳了新履歷，建議重新進行健檢。</p>
+                </div>
+            </div>
+            <button onclick="reAnalyze()" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-1.5 rounded text-sm font-bold transition-colors">
+                重新分析 <i class="fa-solid fa-rotate mr-1"></i>
+            </button>
+        </div>
+
+        <!-- Section 1: 職缺情報儀表板 (Metadata) -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+            <!-- 背景裝飾 -->
+            <div class="absolute -right-10 -top-10 text-indigo-50 opacity-50 pointer-events-none">
+                <i class="fa-solid fa-briefcase text-9xl"></i>
+            </div>
+            
+            <h2 class="text-lg font-bold text-gray-800 mb-5 flex items-center"><i class="fa-solid fa-chart-pie text-indigo-500 mr-2"></i> 職缺情報儀表板</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="metadata-grid">
+                <!-- 內容由 JS 產生 -->
+            </div>
+            
+            <div class="mt-4 bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-start text-xs text-slate-500">
+                <i class="fa-solid fa-circle-info mt-0.5 mr-2 text-indigo-400"></i>
+                <p>註解：HR 活躍度 (PR值) 與最後處理履歷時間，皆為「爬蟲抓取當下」的時間快照，並非即時狀態，請謹慎參考。</p>
+            </div>
+        </section>
+
+        <!-- Section 2: 核心戰力雷達 -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 分數區 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-center">
+                <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center"><i class="fa-solid fa-crosshairs text-rose-500 mr-2"></i> 綜合匹配指數</h2>
+                
+                <!-- 硬技術分數 -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-gray-700">硬技術吻合度</span>
+                        <span class="text-2xl font-black text-rose-500" id="score-tech">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2.5">
+                        <div class="bg-gradient-to-r from-rose-400 to-rose-600 h-2.5 rounded-full animate-fill" id="bar-tech" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 經歷分數 -->
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-gray-700">經歷年資吻合度</span>
+                        <span class="text-2xl font-black text-emerald-500" id="score-exp">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2.5">
+                        <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2.5 rounded-full animate-fill" id="bar-exp" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分析清單區 -->
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 完美命中 -->
+                <div class="bg-emerald-50/50 rounded-xl border border-emerald-100 p-4">
+                    <h3 class="font-bold text-emerald-800 mb-3 flex items-center"><i class="fa-solid fa-check-circle text-emerald-500 mr-2"></i> 完美命中清單</h3>
+                    <ul class="space-y-2 text-sm text-emerald-700" id="list-perfect"></ul>
+                </div>
+                <!-- 隱藏實力 -->
+                <div class="bg-blue-50/50 rounded-xl border border-blue-100 p-4">
+                    <h3 class="font-bold text-blue-800 mb-3 flex items-center"><i class="fa-solid fa-lightbulb text-blue-500 mr-2"></i> 隱藏實力提醒</h3>
+                    <ul class="space-y-2 text-sm text-blue-700" id="list-hidden"></ul>
+                </div>
+                <!-- 致命缺口 -->
+                <div class="bg-red-50/50 rounded-xl border border-red-100 p-4">
+                    <h3 class="font-bold text-red-800 mb-3 flex items-center"><i class="fa-solid fa-skull-crossbones text-red-500 mr-2"></i> 致命技能缺口</h3>
+                    <ul class="space-y-2 text-sm text-red-700" id="list-fatal"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 履歷健檢與微調 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center"><i class="fa-solid fa-user-doctor text-indigo-500 mr-2"></i> 履歷健檢與微調建議</h2>
+                </div>
+                <div class="p-6 flex-1 space-y-6">
+                    <div>
+                        <h3 class="font-bold text-orange-600 mb-2 flex items-center text-sm"><i class="fa-solid fa-flag mr-1.5"></i> HR 潛在挑剔點 (Red Flags)</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 list-disc pl-5 marker:text-orange-300" id="list-redflags"></ul>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div>
+                        <h3 class="font-bold text-purple-600 mb-2 flex items-center text-sm"><i class="fa-solid fa-pen-nib mr-1.5"></i> 客製化排版建議</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 list-disc pl-5 marker:text-purple-300" id="list-tweaks"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cover Letter 生成器 -->
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl shadow-sm border border-indigo-100 p-6 flex flex-col relative">
+                <h2 class="text-lg font-bold text-indigo-900 mb-2 flex items-center"><i class="fa-solid fa-envelope-open-text text-indigo-500 mr-2"></i> 一鍵生成推薦信 (Cover Letter)</h2>
+                <p class="text-xs text-indigo-600/70 mb-4">綜合以上技能優勢與缺口，讓 AI 幫你寫出命中痛點的投遞信。</p>
+                
+                <div class="flex-1 bg-white rounded-xl border border-indigo-100 p-4 mb-4 overflow-y-auto no-scrollbar shadow-inner relative">
+                    <!-- 內容區 -->
+                    <div id="cover-letter-content" class="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed h-48 md:h-full">
+                        <div class="h-full flex flex-col items-center justify-center text-indigo-300">
+                            <i class="fa-regular fa-envelope text-4xl mb-2"></i>
+                            <p>尚未生成</p>
+                        </div>
+                    </div>
+                    <!-- 載入遮罩 -->
+                    <div id="cover-letter-loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col justify-center items-center hidden rounded-xl">
+                        <i class="fa-solid fa-pen-fancy text-2xl text-indigo-500 animate-bounce mb-2"></i>
+                        <span class="text-sm font-bold text-indigo-700">大師揮毫中...</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button id="btn-generate-cl" onclick="generateCoverLetter()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition-colors shadow-md shadow-indigo-500/30">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 開始生成
+                    </button>
+                    <button id="btn-copy-cl" onclick="copyCoverLetter()" class="hidden bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 rounded-xl font-bold transition-colors">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 面試實戰模擬室 -->
+        <section class="bg-gray-900 rounded-2xl shadow-lg border border-gray-700 overflow-hidden text-gray-200">
+            <div class="px-6 py-4 border-b border-gray-700 flex items-center justify-between bg-gray-800">
+                <h2 class="text-lg font-bold text-white flex items-center"><i class="fa-solid fa-person-chalkboard text-emerald-400 mr-2"></i> 面試實戰模擬室</h2>
+                <div class="flex items-center space-x-3">
+                    <button id="btn-refresh-interview" onclick="refreshInterviewQuestions()" class="text-xs font-bold px-3 py-1.5 rounded bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white transition-colors flex items-center border border-gray-600 hover:border-emerald-500">
+                        <i class="fa-solid fa-rotate mr-1"></i> 換一批題目
+                    </button>
+                    <span class="text-xs font-mono bg-gray-700 text-emerald-400 px-2 py-1 rounded">AI Interviewer</span>
+                </div>
+            </div>
+            
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6" id="interview-prep-container">
+                <!-- 由 JS 生成卡片 -->
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    const USER_ID = 'default_user';
+    // 取得網址列上的 job_id
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('job_id');
+
+    let currentMetadata = null;
+
+    window.onload = async () => {
+        if (!jobId) {
+            alert('缺少 job_id，將返回儀表板！');
+            window.location.href = '/dashboard';
+            return;
+        }
+        
+        await loadAnalysisData();
+    };
+
+    // 載入深度分析資料
+    async function loadAnalysisData() {
+        try {
+            const res = await fetch(`/api/get-deep-analysis?user_id=${USER_ID}&job_id=${jobId}`);
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                currentMetadata = result.metadata || {};
+                renderAnalysisUI({
+                    metadata: result.metadata,
+                    ...result.analysis
+                });
+            } else if (result.status === 'not_analyzed') {
+                currentMetadata = result.metadata || {};
+                if (result.metadata) {
+                    renderMetadataOnly(result.metadata);
+                }
+                // 未分析過，自動觸發首次深度分析
+                await runDeepAnalysis();
+            } else {
+                alert('載入失敗：' + (result.message || '未知錯誤'));
+            }
+        } catch (error) {
+            console.error('載入深度分析資料異常:', error);
+            alert('無法連線至後端伺服器，請確認服務已啟動。');
+        }
+    }
+
+    function renderMetadataOnly(meta) {
+        document.getElementById('header-job-name').innerText = meta.jobName || '職缺分析';
+        document.getElementById('header-cust-name').innerText = meta.custName || '';
+        if (meta.custUrl && meta.custUrl !== '#') {
+            document.getElementById('btn-cust-url').href = meta.custUrl;
+            document.getElementById('btn-cust-url').classList.remove('hidden');
+        }
+        if (meta.analysisUrl) {
+            document.getElementById('btn-apply-url').href = meta.analysisUrl;
+        }
+
+        const metaGrid = document.getElementById('metadata-grid');
+        const dateObj = new Date((meta.lastProcessedResumeAtTime || 0) * 1000);
+        const dateStr = meta.lastProcessedResumeAtTime ? `${dateObj.getFullYear()}/${dateObj.getMonth()+1}/${dateObj.getDate()}` : '無資料';
+        let hrColor = (meta.hrBehaviorPR || 0) > 0.5 ? 'text-green-600 bg-green-100' : 'text-orange-600 bg-orange-100';
+
+        metaGrid.innerHTML = `
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p class="text-xs text-slate-500 mb-1">薪資待遇</p>
+                <p class="font-bold text-slate-800">${meta.salaryType || '未填寫'}</p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p class="text-xs text-slate-500 mb-1">工作地點</p>
+                <p class="font-bold text-slate-800 truncate" title="${meta.address || '未提供'}">${meta.address || '未提供'}</p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p class="text-xs text-slate-500 mb-1">最後看履歷日</p>
+                <p class="font-bold text-slate-800">${dateStr}</p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p class="text-xs text-slate-500 mb-1">HR 積極度</p>
+                <p class="font-bold inline-block px-2 py-0.5 rounded ${hrColor}">PR ${((meta.hrBehaviorPR || 0)*100).toFixed(0)}</p>
+            </div>
+        `;
+    }
+
+    function renderAnalysisUI(data) {
+        // 1. 處理警告橫幅
+        if (data.is_latest_resume === 0) {
+            document.getElementById('outdated-banner').classList.remove('hidden');
+        } else {
+            document.getElementById('outdated-banner').classList.add('hidden');
+        }
+
+        // 2. 標題與按鈕
+        if (data.metadata) {
+            renderMetadataOnly(data.metadata);
+        }
+
+        // 3. Section 2: 分數與清單
+        const techScore = data.match_tech_score || 0;
+        const expScore = data.match_exp_score || 0;
+        document.getElementById('score-tech').innerText = techScore + '%';
+        document.getElementById('bar-tech').style.width = techScore + '%';
+        document.getElementById('score-exp').innerText = expScore + '%';
+        document.getElementById('bar-exp').style.width = expScore + '%';
+
+        renderList('list-perfect', data.perfect_matches, 'fa-check');
+        renderList('list-hidden', data.hidden_strengths, 'fa-arrow-right');
+        renderList('list-fatal', data.fatal_gaps, 'fa-xmark');
+
+        // 4. Section 3: 履歷建議
+        renderList('list-redflags', data.hr_red_flags, 'fa-triangle-exclamation');
+        renderList('list-tweaks', data.resume_tweaks, 'fa-circle-dot');
+
+        if (data.cover_letter) {
+            displayCoverLetter(data.cover_letter);
+        }
+
+        // 5. Section 4: 面試題
+        const prepContainer = document.getElementById('interview-prep-container');
+        if (data.interview_prep && data.interview_prep.length > 0) {
+            renderInterviewQuestionsUI(data.interview_prep);
+        } else {
+            prepContainer.innerHTML = `
+                <div class="col-span-1 md:col-span-2 text-center py-10 text-gray-400">
+                    <p class="text-sm">尚未生成模擬面試題，請點擊上方按鈕立即產出！</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderInterviewQuestionsUI(questions) {
+        const prepContainer = document.getElementById('interview-prep-container');
+        prepContainer.innerHTML = questions.map((item) => `
+            <div class="bg-gray-800 border border-gray-600 rounded-xl p-5 flex flex-col">
+                <div class="flex items-center mb-3">
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-indigo-900 text-indigo-300 border border-indigo-700">${item.type || '面試關鍵題'}</span>
+                </div>
+                <h3 class="font-bold text-white text-lg mb-4">Q: ${item.question}</h3>
+                <div class="mt-auto bg-gray-900 rounded-lg p-4 border border-gray-700 relative">
+                    <span class="absolute -top-3 left-4 bg-gray-700 text-gray-300 text-[10px] px-2 py-0.5 rounded font-bold">反殺策略</span>
+                    <p class="text-sm text-gray-400 leading-relaxed">${item.advice}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderList(elementId, items, icon) {
+        const el = document.getElementById(elementId);
+        if (!items || items.length === 0) {
+            el.innerHTML = '<li class="text-gray-400 italic">無相關資料</li>';
+            return;
+        }
+        el.innerHTML = items.map(item => `
+            <li class="flex items-start">
+                <i class="fa-solid ${icon} mt-1 mr-2 opacity-50 text-[10px]"></i>
+                <span>${item}</span>
+            </li>
+        `).join('');
+    }
+
+    // 呼叫後端執行深度分析
+    async function runDeepAnalysis() {
+        const outdatedBannerBtn = document.querySelector('#outdated-banner button');
+        if (outdatedBannerBtn) {
+            outdatedBannerBtn.disabled = true;
+            outdatedBannerBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> 分析中...';
+        }
+
+        // 分數顯示分析中
+        document.getElementById('score-tech').innerText = '...';
+        document.getElementById('score-exp').innerText = '...';
+
+        const formData = new FormData();
+        formData.append('user_id', USER_ID);
+        formData.append('job_id', jobId);
+
+        try {
+            const res = await fetch('/api/run-deep-analysis', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                document.getElementById('outdated-banner').classList.add('hidden');
+                renderAnalysisUI({
+                    metadata: currentMetadata,
+                    ...result.data
+                });
+
+                // 如果還沒有面試題，順便生成
+                if (!result.data.interview_prep || result.data.interview_prep.length === 0) {
+                    await refreshInterviewQuestions();
+                }
+            } else {
+                alert('深度分析失敗：' + (result.message || '未知錯誤'));
+            }
+        } catch (error) {
+            console.error('執行深度分析錯誤:', error);
+            alert('呼叫深度分析 API 時發生連線錯誤！');
+        } finally {
+            if (outdatedBannerBtn) {
+                outdatedBannerBtn.disabled = false;
+                outdatedBannerBtn.innerHTML = '重新分析 <i class="fa-solid fa-rotate mr-1"></i>';
+            }
+        }
+    }
+
+    function reAnalyze() {
+        runDeepAnalysis();
+    }
+
+    // 呼叫 API 生成 Cover Letter
+    async function generateCoverLetter() {
+        const btn = document.getElementById('btn-generate-cl');
+        const loading = document.getElementById('cover-letter-loading');
+        
+        btn.disabled = true;
+        loading.classList.remove('hidden');
+
+        const formData = new FormData();
+        formData.append('user_id', USER_ID);
+        formData.append('job_id', jobId);
+
+        try {
+            const res = await fetch('/api/generate-cover-letter', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                displayCoverLetter(result.data);
+                btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> 生成完成`;
+                btn.classList.replace('bg-indigo-600', 'bg-emerald-500');
+                btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-600');
+            } else {
+                alert('生成推薦信失敗：' + (result.message || '未知錯誤'));
+            }
+        } catch (error) {
+            console.error('生成推薦信錯誤:', error);
+            alert('伺服器連線異常，請稍後再試。');
+        } finally {
+            loading.classList.add('hidden');
+            btn.disabled = false;
+        }
+    }
+
+    function displayCoverLetter(text) {
+        document.getElementById('cover-letter-content').innerHTML = text;
+        document.getElementById('cover-letter-content').classList.remove('flex', 'items-center', 'justify-center', 'text-indigo-300');
+        document.getElementById('btn-copy-cl').classList.remove('hidden');
+    }
+
+    function copyCoverLetter() {
+        const text = document.getElementById('cover-letter-content').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById('btn-copy-cl');
+            btn.innerHTML = '<i class="fa-solid fa-check text-emerald-500"></i>';
+            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i>'; }, 2000);
+        });
+    }
+
+    // 呼叫 API 生成/更換模擬面試題
+    async function refreshInterviewQuestions() {
+        const prepContainer = document.getElementById('interview-prep-container');
+        const btn = document.getElementById('btn-refresh-interview');
+        const icon = btn.querySelector('i');
+        
+        btn.disabled = true;
+        if (icon) icon.classList.add('fa-spin');
+        
+        prepContainer.innerHTML = `
+            <div class="col-span-1 md:col-span-2 flex flex-col items-center justify-center py-12 text-emerald-500">
+                <i class="fa-solid fa-brain fa-bounce text-4xl mb-4"></i>
+                <p class="text-sm font-bold animate-pulse">AI 正在針對履歷缺口生成模擬面試題目...</p>
+            </div>
+        `;
+
+        const formData = new FormData();
+        formData.append('user_id', USER_ID);
+        formData.append('job_id', jobId);
+
+        try {
+            const res = await fetch('/api/generate-interview-questions', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                renderInterviewQuestionsUI(result.data);
+            } else {
+                prepContainer.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 text-center py-8 text-rose-400">
+                        <p class="text-sm">題目生成失敗：${result.message || '請先執行深度分析'}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('生成面試題錯誤:', error);
+            prepContainer.innerHTML = `
+                <div class="col-span-1 md:col-span-2 text-center py-8 text-rose-400">
+                    <p class="text-sm">連線錯誤，無法生成面試題。</p>
+                </div>
+            `;
+        } finally {
+            btn.disabled = false;
+            if (icon) icon.classList.remove('fa-spin');
+        }
+    }
+</script>
+{% endblock %}

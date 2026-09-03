@@ -34,10 +34,30 @@
         
         <!-- Tab 1: SQLite View -->
         <div id="tab-sqlite" class="tab-content active">
+            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料) -->
+            <div class="flex flex-wrap items-center justify-between mb-5 gap-4">
+                <div class="flex items-center space-x-2 bg-gray-200/80 p-1.5 rounded-2xl shadow-inner">
+                    <button onclick="switchSubTab('sqlite', 'all')" id="subtab-sqlite-all" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-indigo-600 shadow-sm transition-all duration-200">
+                        <i class="fa-solid fa-database mr-2 text-indigo-500"></i>
+                        <span>總資料庫</span>
+                    </button>
+                    <button onclick="switchSubTab('sqlite', 'latest')" id="subtab-sqlite-latest" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-white/60 transition-all duration-200">
+                        <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>
+                        <span>剛爬取的資料</span>
+                        <span id="sqlite-latest-badge" class="ml-2 bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                    <h2 class="text-lg font-semibold text-gray-800">近期抓取紀錄</h2>
-                    <span id="sqlite-total-count" class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-medium">總計: 2 筆</span>
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-lg font-semibold text-gray-800" id="sqlite-view-title">總資料庫紀錄</h2>
+                        <span id="sqlite-subtab-indicator" class="hidden text-xs bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full font-semibold">
+                            <i class="fa-solid fa-sparkles mr-1"></i> 最新抓取批次
+                        </span>
+                    </div>
+                    <span id="sqlite-total-count" class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-medium">總計: 0 筆</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -46,7 +66,6 @@
                                 <th class="px-6 py-4 font-medium">Job ID</th>
                                 <th class="px-6 py-4 font-medium">公司名稱 (custName)</th>
                                 <th class="px-6 py-4 font-medium">職缺名稱 (jobName)</th>
-                                <th class="px-6 py-4 font-medium">資料狀態</th>
                                 <th class="px-6 py-4 font-medium">職缺網址</th>
                                 <th class="px-6 py-4 font-medium text-right">操作</th>
                             </tr>
@@ -57,15 +76,9 @@
                     </table>
                 </div>
 
-                                <!-- 加上 SQLite 的分頁器 -->
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-                    <button onclick="changeSqlitePage(-1)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" id="btn-sqlite-prev">
-                        上一頁
-                    </button>
-                    <span class="text-sm text-gray-600 font-medium" id="sqlite-page-info">第 1 頁</span>
-                    <button onclick="changeSqlitePage(1)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" id="btn-sqlite-next">
-                        下一頁
-                    </button>
+                <!-- 加上 SQLite 的分頁器 -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50" id="sqlite-pagination-container">
+                    <!-- JS 會把分頁按鈕跟跳轉輸入框塞進來 -->
                 </div>
 
             </div>
@@ -73,18 +86,33 @@
 
         <!-- Tab 2: ChromaDB View -->
         <div id="tab-chroma" class="tab-content">
+            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料) -->
+            <div class="flex flex-wrap items-center justify-between mb-5 gap-4">
+                <div class="flex items-center space-x-2 bg-gray-200/80 p-1.5 rounded-2xl shadow-inner">
+                    <button onclick="switchSubTab('chroma', 'all')" id="subtab-chroma-all" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 shadow-sm transition-all duration-200">
+                        <i class="fa-solid fa-layer-group mr-2 text-emerald-500"></i>
+                        <span>總資料庫</span>
+                    </button>
+                    <button onclick="switchSubTab('chroma', 'latest')" id="subtab-chroma-latest" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-white/60 transition-all duration-200">
+                        <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>
+                        <span>剛爬取的資料</span>
+                        <span id="chroma-latest-badge" class="ml-2 bg-emerald-100 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-emerald-500">
                     <p class="text-gray-500 text-sm font-medium mb-1">集合名稱 (Collection)</p>
-                    <p class="text-xl font-bold text-gray-800">jobs_collection</p>
+                    <p class="text-xl font-bold text-gray-800">job_chunks</p>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-indigo-500">
                     <p class="text-gray-500 text-sm font-medium mb-1">已向量化文件</p>
-                    <p id="chroma-doc-count" class="text-xl font-bold text-gray-800">2 <span class="text-sm font-normal text-emerald-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 100%</span></p>
+                    <p id="chroma-doc-count" class="text-xl font-bold text-gray-800">0 <span class="text-sm font-normal text-emerald-500 ml-2"><i class="fa-solid fa-arrow-up"></i> 即時連線</span></p>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-blue-500">
                     <p class="text-gray-500 text-sm font-medium mb-1">嵌入模型 (Embedding)</p>
-                    <p class="text-xl font-bold text-gray-800">all-MiniLM-L6-v2</p>
+                    <p class="text-xl font-bold text-gray-800">104 專屬特徵維度</p>
                 </div>
             </div>
 
@@ -108,7 +136,12 @@
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                    <h2 class="text-lg font-semibold text-gray-800">已映射 Metadata 與 Documents</h2>
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-lg font-semibold text-gray-800" id="chroma-view-title">已映射 Metadata 與 Documents</h2>
+                        <span id="chroma-subtab-indicator" class="hidden text-xs bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full font-semibold">
+                            <i class="fa-solid fa-sparkles mr-1"></i> 最新抓取批次
+                        </span>
+                    </div>
                     <button onclick="fetchChromaData()" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center space-x-1">
                         <i class="fa-solid fa-rotate"></i> <span>重新載入</span>
                     </button>
@@ -133,14 +166,8 @@
                 </div>
 
                 <!-- 加上 Chroma 的分頁器 -->
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-                    <button onclick="changeChromaPage(-1)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" id="btn-chroma-prev">
-                        上一頁
-                    </button>
-                    <span class="text-sm text-gray-600 font-medium" id="chroma-page-info">第 1 頁</span>
-                    <button onclick="changeChromaPage(1)" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" id="btn-chroma-next">
-                        下一頁
-                    </button>
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50" id="chroma-pagination-container">
+                    <!-- JS 會把分頁按鈕跟跳轉輸入框塞進來 -->
                 </div>
 
             </div>

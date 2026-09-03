@@ -73,7 +73,7 @@ def get_document(job_json):
     match job_json['jobDetail']['salaryType']:
         case 50: # 月薪
             salary_str = f"薪水:月薪範圍{job_json['jobDetail']['salaryMin']}-{job_json['jobDetail']['salaryMax']}"
-        case 60 | 10 | 30: # 年薪&待遇面議
+        case _: # 年薪&待遇面議&部分工時
             salary_str = f"薪水:{job_json['jobDetail']['salary']}"
 
     job_detail = f'''\
@@ -139,7 +139,7 @@ def get_metadata(job_json):
         "hrEmail": job_json['contact']['email'],
         "salaryMin": int(job_json['jobDetail']['salaryMin']),
         "salaryMax": int(job_json['jobDetail']['salaryMax']),
-        "salaryType": salaryType_dict[int(job_json['jobDetail']['salaryType'])],
+        "salaryType": salaryType_dict.get(int(job_json['jobDetail']['salaryType']),'其他'),
         "jobType": jobType_dict.get(int(job_json['jobDetail']['jobType']),'其他'),
         "address": job_json['jobDetail']['addressRegion'] + job_json['jobDetail']['addressDetail'] + " " + job_json['jobDetail']['industryArea'],
         "industry": job_json['industry'],
