@@ -24,11 +24,21 @@ async def websocket_scrape(websocket: WebSocket) -> None:
         while True:
             data = await websocket.receive_json()
             action = data.get("action", "start")
-            if action == "start" or ("areas" in data and "jobcats" in data):
+            if (
+                action == "start"
+                or ("areas" in data and "jobcats" in data)
+                or ("job_codes" in data)
+            ):
                 areas = data.get("areas", [])
                 jobcats = data.get("jobcats", [])
                 keyword = data.get("keyword", "")
-                started = scraper_manager.start_scrape(areas, jobcats, keyword)
+                job_codes = data.get("job_codes", [])
+                started = scraper_manager.start_scrape(
+                    areas=areas,
+                    jobcats=jobcats,
+                    keyword=keyword,
+                    job_codes=job_codes,
+                )
                 if not started:
                     await websocket.send_json(
                         {

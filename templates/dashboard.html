@@ -34,7 +34,7 @@
         
         <!-- Tab 1: SQLite View -->
         <div id="tab-sqlite" class="tab-content active">
-            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料) -->
+            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料 vs 主要關注) -->
             <div class="flex flex-wrap items-center justify-between mb-5 gap-4">
                 <div class="flex items-center space-x-2 bg-gray-200/80 p-1.5 rounded-2xl shadow-inner">
                     <button onclick="switchSubTab('sqlite', 'all')" id="subtab-sqlite-all" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-indigo-600 shadow-sm transition-all duration-200">
@@ -45,6 +45,11 @@
                         <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>
                         <span>剛爬取的資料</span>
                         <span id="sqlite-latest-badge" class="ml-2 bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchSubTab('sqlite', 'starred')" id="subtab-sqlite-starred" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-amber-600 hover:bg-white/60 transition-all duration-200">
+                        <i class="fa-solid fa-star mr-2 text-amber-400"></i>
+                        <span>主要關注</span>
+                        <span id="sqlite-starred-badge" class="ml-2 bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
                     </button>
                 </div>
             </div>
@@ -86,7 +91,7 @@
 
         <!-- Tab 2: ChromaDB View -->
         <div id="tab-chroma" class="tab-content">
-            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料) -->
+            <!-- 分頁切換器 (總資料庫 vs 剛爬取的資料 vs 主要關注) -->
             <div class="flex flex-wrap items-center justify-between mb-5 gap-4">
                 <div class="flex items-center space-x-2 bg-gray-200/80 p-1.5 rounded-2xl shadow-inner">
                     <button onclick="switchSubTab('chroma', 'all')" id="subtab-chroma-all" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 shadow-sm transition-all duration-200">
@@ -97,6 +102,11 @@
                         <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>
                         <span>剛爬取的資料</span>
                         <span id="chroma-latest-badge" class="ml-2 bg-emerald-100 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchSubTab('chroma', 'starred')" id="subtab-chroma-starred" class="flex items-center px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-amber-600 hover:bg-white/60 transition-all duration-200">
+                        <i class="fa-solid fa-star mr-2 text-amber-400"></i>
+                        <span>主要關注</span>
+                        <span id="chroma-starred-badge" class="ml-2 bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
                     </button>
                 </div>
             </div>

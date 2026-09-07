@@ -83,6 +83,7 @@
                     </button>
                 </div>
 
+                <!-- 搜尋關鍵字卡片 -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-start transition-shadow hover:shadow-md">
                     <div class="flex items-center space-x-4 w-full">
                         <div class="bg-amber-50 p-4 rounded-xl text-amber-500 shadow-sm border border-amber-100">
@@ -95,6 +96,22 @@
                     </div>
                     <div class="mt-auto w-full pt-6">
                         <input type="text" id="keyword-input" placeholder="例如：Python、台積電..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all bg-gray-50 focus:bg-white shadow-inner">
+                    </div>
+                </div>
+
+                <!-- 指定 Job Code 卡片 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-start transition-shadow hover:shadow-md">
+                    <div class="flex items-center space-x-4 w-full">
+                        <div class="bg-purple-50 p-4 rounded-xl text-purple-500 shadow-sm border border-purple-100">
+                            <i class="fa-solid fa-crosshairs text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-bold text-gray-800 text-lg">指定 Job Code (特定公司/職缺)</h2>
+                            <p class="text-sm mt-1 text-gray-400">輸入特定職缺代碼，多筆請用空格或逗號分開</p>
+                        </div>
+                    </div>
+                    <div class="mt-auto w-full pt-6">
+                        <input type="text" id="job-code-input" placeholder="例如：8KGKI 8GTYI 或 74tpb, 8ud7l..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all bg-gray-50 focus:bg-white shadow-inner">
                     </div>
                 </div>
             </div>
@@ -536,18 +553,38 @@
         const areaUl = document.querySelector('#area-container > ul');
         const jobcatUl = document.querySelector('#jobcat-container > ul');
         const keywordInput = document.getElementById('keyword-input').value.trim();
-        
-        if (!areaUl || !jobcatUl) {
-            alert("⚠️ 選項資料尚未載入成功，請稍後再試！");
-            return;
+        const jobCodeInput = document.getElementById('job-code-input').value.trim();
+
+        // 解析 job_code 輸入（以空格或逗號分隔，自動清理與過濾）
+        let jobCodes = [];
+        if (jobCodeInput) {
+            jobCodes = jobCodeInput
+                .replace(/,/g, ' ')
+                .split(/\s+/)
+                .map(code => {
+                    const clean = code.trim().split('?')[0].replace(/\/$/, '');
+                    const parts = clean.split('/');
+                    return parts[parts.length - 1];
+                })
+                .filter(code => code.length > 0);
         }
 
-        const selectedAreas = getSelectedValues(areaUl);
-        const selectedJobcats = getSelectedValues(jobcatUl);
+        let selectedAreas = [];
+        let selectedJobcats = [];
+        if (areaUl) selectedAreas = getSelectedValues(areaUl);
+        if (jobcatUl) selectedJobcats = getSelectedValues(jobcatUl);
 
-        if (selectedAreas.length === 0 || selectedJobcats.length === 0) {
-            alert("地點跟職缺至少都要選一個喔！");
-            return;
+        // 驗證：若未輸入 job_code，則必須選擇地點與職務類別
+        if (jobCodes.length === 0) {
+            if (!areaUl || !jobcatUl) {
+                alert("⚠️ 選項資料尚未載入成功，請稍後再試！");
+                return;
+            }
+
+            if (selectedAreas.length === 0 || selectedJobcats.length === 0) {
+                alert("請至少輸入「指定 Job Code」或選擇「工作地點」與「職務類別」！");
+                return;
+            }
         }
 
         setButtonRunning();
@@ -562,7 +599,8 @@
             action: "start",
             areas: selectedAreas,
             jobcats: selectedJobcats,
-            keyword: keywordInput
+            keyword: keywordInput,
+            job_codes: jobCodes
         };
 
         if (ws && ws.readyState === WebSocket.OPEN) {

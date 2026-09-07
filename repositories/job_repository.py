@@ -14,6 +14,7 @@ class JobRepository:
         keyword: str = "",
         filter_ids: Optional[List[str]] = None,
         latest_ids: Optional[List[str]] = None,
+        starred_ids: Optional[List[str]] = None,
     ) -> Tuple[int, List[Dict[str, Any]]]:
         """從 SQLite 分頁查詢職缺資料。"""
         with get_db_connection() as conn:
@@ -59,6 +60,7 @@ class JobRepository:
                             "raw_json": flatten(job_data_str),
                             "job_link": job_link,
                             "is_latest": latest_ids is not None and job_id in latest_ids,
+                            "is_starred": starred_ids is not None and job_id in starred_ids,
                         }
                     )
                 except Exception:
@@ -159,12 +161,51 @@ class JobRepository:
     def add_chroma_chunks(
         documents: List[str], metadatas: List[Dict[str, Any]], ids: List[str]
     ) -> None:
-        """寫入 Chunks 至 ChromaDB 集合。"""
+        """寫入或更新 Chunks 至 ChromaDB 集合。"""
         collection = get_chroma_collection()
-        collection.add(documents=documents, metadatas=metadatas, ids=ids)
+        collection.upsert(documents=documents, metadatas=metadatas, ids=ids)
 
     @staticmethod
     def query_chroma(query_text: str, n_results: int = 30) -> Dict[str, Any]:
         """以語意向量查詢 ChromaDB 相似職缺。"""
         collection = get_chroma_collection()
         return collection.query(query_texts=[query_text], n_results=n_results)
+
+    @staticmethod
+    def get_starred_job_ids() -> List[str]:
+        """取得所有已儲存在 SQLite starred_jobs 資料表的 job_id 清單。"""
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT job_id FROM starred_jobs ORDER BY created_at DESC")
+            return [row[0] for row in cursor.fetchall()]
+
+    @staticmethod
+    def toggle_star_job(job_id: str) -> Tuple[bool, int]:
+        """在 SQLite 資料庫切換指定 job_id 的關注狀態，回傳 (is_starred, total_starred_count)。"""
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1 FROM starred_jobs WHERE job_id = ?", (job_id,))
+            exists = cursor.fetchone() is not None
+            if exists:
+                cursor.execute("DELETE FROM starred_jobs WHERE job_id = ?", (job_id,))
+                is_starred = False
+            else:
+                cursor.execute(
+                    "INSERT OR REPLACE INTO starred_jobs (job_id) VALUES (?)",
+                    (job_id,),
+                )
+                is_starred = True
+            conn.commit()
+
+            cursor.execute("SELECT COUNT(*) FROM starred_jobs")
+            total_count = cursor.fetchone()[0]
+            return is_starred, total_count
+
+    @staticmethod
+    def is_job_starred(job_id: str) -> bool:
+        """檢查特定職缺是否在 SQLite 中被標記為關注。"""
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1 FROM starred_jobs WHERE job_id = ?", (job_id,))
+            return cursor.fetchone() is not None
+

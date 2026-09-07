@@ -6,8 +6,8 @@ def get_document(job_json):
     phone_str = ",".join(job_json['contact']['phone']) if job_json['contact']['phone'] else "無"
 
     # hr單位
-    hr = job_json['contact']['hrName']
-    email = job_json['contact']['email']
+    hr = job_json['contact'].get('hrName','無')
+    email = job_json['contact'].get('email','無')
 
     contact_str = f'''
         {hr}
@@ -135,8 +135,8 @@ def get_metadata(job_json):
         "custUrl": job_json['header']['custUrl'],
         "analysisUrl": job_json['header']['analysisUrl'],
         "hrBehaviorPR": float(job_json['header']['hrBehaviorPR']),
-        "hrName": job_json['contact']['hrName'],
-        "hrEmail": job_json['contact']['email'],
+        "hrName": job_json['contact'].get('hrName','無'),
+        "hrEmail": job_json['contact'].get('email','無'),
         "salaryMin": int(job_json['jobDetail']['salaryMin']),
         "salaryMax": int(job_json['jobDetail']['salaryMax']),
         "salaryType": salaryType_dict.get(int(job_json['jobDetail']['salaryType']),'其他'),

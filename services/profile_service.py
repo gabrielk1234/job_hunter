@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict, Optional
 from fastapi import UploadFile
-import fitz
+import pymupdf
 from google import genai
 from google.genai import types
 
@@ -31,7 +31,7 @@ class ProfileService:
                 raise ValueError("只能上傳 PDF 檔案")
 
             content = await file.read()
-            with fitz.open(stream=content, filetype="pdf") as pdf:
+            with pymupdf.open(stream=content, filetype="pdf") as pdf:
                 for page in pdf:
                     extracted = page.get_text()
                     if extracted:

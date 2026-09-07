@@ -10,6 +10,7 @@ class SqliteJobItem(BaseModel):
     raw_json: str
     job_link: Optional[str] = None
     is_latest: bool = False
+    is_starred: bool = False
 
 
 class SqliteJobsResponse(BaseModel):
@@ -20,6 +21,7 @@ class SqliteJobsResponse(BaseModel):
     page: int
     total_pages: int
     latest_count: int
+    starred_count: Optional[int] = 0
     message: Optional[str] = None
 
 
@@ -29,6 +31,7 @@ class ChromaJobItem(BaseModel):
     metadata: Dict[str, Any]
     document: str
     is_latest: bool = False
+    is_starred: bool = False
 
 
 class ChromaJobsResponse(BaseModel):
@@ -39,4 +42,22 @@ class ChromaJobsResponse(BaseModel):
     page: int
     total_pages: int
     latest_count: int
+    starred_count: Optional[int] = 0
     message: Optional[str] = None
+
+
+class ToggleStarResponse(BaseModel):
+    """切換職缺關注狀態回應。"""
+    status: str
+    job_id: str
+    is_starred: bool
+    starred_count: int
+    message: Optional[str] = None
+
+
+class StarredJobsResponse(BaseModel):
+    """已關注職缺 ID 清單回應。"""
+    status: str
+    data: List[str]
+    count: int
+
