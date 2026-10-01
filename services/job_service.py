@@ -128,8 +128,8 @@ class JobService:
             elif len(current_latest_ids) > 1:
                 conditions.append({"job_id": {"$in": current_latest_ids}})
 
-        if min_salary > 0:
-            if min_salary <= 40000:
+        if min_salary > 0: # 有設置最低薪資條件
+            if min_salary <= 40000: # 將待遇面議考慮進去
                 conditions.append({"salaryMin": {"$gte": min_salary}})
             else:
                 conditions.append(
@@ -144,17 +144,6 @@ class JobService:
         if min_hr_pr > 0:
             conditions.append({"hrBehaviorPR": {"$gte": float(min_hr_pr)}})
 
-        if keyword:
-            conditions.append(
-                {
-                    "$or": [
-                        {"job_id": {"$contains": keyword}},
-                        {"jobName": {"$contains": keyword}},
-                        {"custName": {"$contains": keyword}},
-                    ]
-                }
-            )
-
         where_clause: Optional[Dict[str, Any]] = None
         if len(conditions) == 1:
             where_clause = conditions[0]
@@ -164,20 +153,36 @@ class JobService:
         total_in_db, raw_jobs = JobRepository.get_chroma_jobs(
             offset=offset, limit=limit, where_clause=where_clause
         )
+        print(where_clause)
+        print()
 
         jobs: List[Dict[str, Any]] = []
         for r in raw_jobs:
             meta = r.get("metadata", {})
             job_id_val = str(meta.get("job_id", "") or r["id"])
-            jobs.append(
-                {
-                    "id": r["id"],
-                    "metadata": meta,
-                    "document": r["document"],
-                    "is_latest": job_id_val in current_latest_ids,
-                    "is_starred": job_id_val in db_starred_ids,
-                }
-            )
+            job_id = str(r.get("id",""))
+            jobName,custName = str(meta.get("jobName","")), str(meta.get("custName",""))
+            print(jobName,custName,job_id_val)
+            if keyword:
+                if(keyword in job_id):
+                    jobs.append(
+                        {
+                            "id": r["id"],
+                            "metadata": meta,
+                            "document": r["document"],
+                            "is_latest": job_id_val in current_latest_ids,
+                            "is_starred": job_id_val in db_starred_ids,
+                        })
+            else:
+                jobs.append(
+                    {
+                        "id": r["id"],
+                        "metadata": meta,
+                        "document": r["document"],
+                        "is_latest": job_id_val in current_latest_ids,
+                        "is_starred": job_id_val in db_starred_ids,
+                    })
+                    
 
         total_pages = math.ceil(total_in_db / limit) if total_in_db > 0 else 1
 
